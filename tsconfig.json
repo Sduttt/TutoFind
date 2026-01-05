@@ -8,6 +8,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "types/nativewind-env.d.ts",
+    "types/env.d.ts",
     "nativewind-env.d.ts"
   ],
   "exclude": [
