@@ -4,6 +4,9 @@ import * as Progress from 'react-native-progress';
 import { useSignupStore } from '../../store/SignupStore';
 import UserType from './UserType';
 import PersonalDetails from './PersonalDetails';
+import OtherDetails from './OtherDetails';
+
+
 type Props = {};
 
 const SignupStack = (props: Props) => {
@@ -20,13 +23,15 @@ const SignupStack = (props: Props) => {
         return <UserType />;
       case 2:
         return <PersonalDetails />;
+      case 3:
+        return <OtherDetails />;
       default:
         return <UserType />;
     }
   };
   return (
-    <SafeAreaView>
-      <Progress.Bar progress={progress} width={200} />
+    <SafeAreaView className="flex-1 bg-white">
+      <Progress.Bar progress={progress} width={null} className="mx-6 mt-4" />
       {renderStep()}
     </SafeAreaView>
   );
