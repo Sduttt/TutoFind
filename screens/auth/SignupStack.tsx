@@ -6,7 +6,6 @@ import UserType from './UserType';
 import PersonalDetails from './PersonalDetails';
 import OtherDetails from './OtherDetails';
 
-
 type Props = {};
 
 const SignupStack = (props: Props) => {
