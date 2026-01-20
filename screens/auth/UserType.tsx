@@ -1,5 +1,5 @@
 import { View, Text, Button, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { useSignupStore } from '../../store/SignupStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 

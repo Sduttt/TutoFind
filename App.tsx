@@ -4,8 +4,18 @@ import './global.css';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import SignupStack from './screens/auth/SignupStack';
+import { useEffect } from 'react';
+import { supabase } from './lib/supabase';
 
 export default function App() {
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event, session?.user?.id);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider className="flex-1">

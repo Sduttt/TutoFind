@@ -406,7 +406,7 @@ const PersonalDetails = (props: Props) => {
                         Verify Your Email
                       </Text>
                       <Text className="text-center text-gray-700 mb-6 px-8">
-                        We sent an OTP to your email address. Please enter it to
+                        We sent an OTP to your email address:{data.email} . Please enter it to
                         verify your account.
                       </Text>
                       <TextInput
@@ -438,17 +438,26 @@ const PersonalDetails = (props: Props) => {
                         </>
                       )}
 
-                      <TouchableOpacity
+                      <View className="flex-row mt-6">
+                        <TouchableOpacity
                         onPress={EmailVerification}
-                        className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-2/3"
+                        className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-1/2 mr-2"
                       >
                         <Text className="text-white font-bold text-lg">
                           Verify
                         </Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => resendEmailVerification(data.email)}
+                        className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-1/2 ml-2"
+                      >
+                        <Text className="text-white font-bold text-lg">
+                          Resend OTP
+                        </Text>
+                      </TouchableOpacity>
+                      </View>
                     </>
                   )
-                  // TODO: pload profile picture to supabbase storage and save the URL in the user's profile
                 }
               </View>
             </View>

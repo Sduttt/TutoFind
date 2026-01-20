@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 import { Image as PickerImage } from 'react-native-image-crop-picker';
-import { FileObject } from '@supabase/storage-js';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
+import { pick } from '@react-native-documents/picker';
+import { Alert } from 'react-native';
 
 declare global {
   const atob: (input: string) => string;
@@ -17,8 +18,20 @@ interface SignupData {
   otp: string | null;
   user_type: 'student' | 'tutor' | 'admin';
   subscription_type: 'free' | 'silver' | 'gold';
+  email_verified?: boolean;
   avatar?: PickerImage | null;
   avatar_url?: string;
+  address?: {
+    latitude: number | null;
+    longitude: number | null;
+    pincode: number | null;
+    city: string | null;
+  } | null;
+  gender: string;
+  native_language: string;
+  other_languages: string[];
+  bio: string;
+  resume_url: string;
 }
 
 interface SignupStore {
@@ -27,14 +40,15 @@ interface SignupStore {
   loading: boolean;
   userId: string | null;
   error: string | null;
-  setData: (key: keyof SignupData, value: string | PickerImage | null) => void;
+  setData: <K extends keyof SignupData>(key: K, value: SignupData[K]) => void;
   setStep: (step: number) => void;
   nextStep: () => void;
   prevStep: () => void;
   clearError: () => void;
   signup: () => Promise<boolean>;
   uploadAvatar: () => Promise<boolean>;
-  updateProfile: (profiledata: any) => Promise<boolean>;
+  uploadResume: () => Promise<boolean>;
+  updateProfile: () => Promise<boolean>;
   verifyEmail: (email: string, otp: string) => Promise<boolean>;
   resendEmailVerification: (email: string) => Promise<boolean>;
   reset: () => void;
@@ -48,8 +62,21 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
     password: '',
     user_type: 'student',
     subscription_type: 'free',
+    email_verified: false,
     otp: null,
     avatar: null,
+    avatar_url: '',
+    address: {
+      latitude: null,
+      longitude: null,
+      pincode: null,
+      city: null,
+    },
+    gender: '',
+    native_language: '',
+    other_languages: [],
+    bio: '',
+    resume_url: '',
   },
   step: 1,
   loading: false,
@@ -136,18 +163,35 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
 
     try {
       await supabase
-        .from('profiles')
-        .update({
-          full_name: data.full_name,
-          email: data.email,
-          phone: data.phone,
+      .from('profiles')
+      .update({
           user_type: data.user_type,
           subscription_type: data.subscription_type,
+          full_name: data.full_name,
+          email: data.email,
+          email_verified: data.email_verified,
           avatar_url: data.avatar_url || null,
+          phone: data.phone,
+          gender: data.gender,
+          native_language: data.native_language,
+          other_languages: data.other_languages,
+          bio: data.bio,
+          resume_url: data.resume_url || null,
+          address: data.address,
         })
         .eq('id', get().userId);
 
       set({ loading: false });
+      Alert.alert(
+        'Success',
+        'Profile updated successfully!',
+        [{ 
+          text: 'View Profile',
+          onPress: () => {
+            //TODO: Navigate to profile screen
+          }
+        }]
+      )
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Profile Update Error: ${error.message}` });
@@ -156,6 +200,7 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
   },
 
   verifyEmail: async (email: string, otp: string) => {
+    
     set({ loading: true, error: null });
 
     try {
@@ -167,7 +212,7 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
       if (error) {
         throw error;
       }
-      set({ loading: false });
+      set({ loading: false, data: { ...get().data, email_verified: true } });
       return true;
     } catch (error: any) {
       set({
@@ -231,11 +276,11 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
       }
 
       const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, buffer, {
-        contentType: data.avatar.mime || 'image/jpeg',
-        upsert: true,
-      });
+        .from('avatars')
+        .upload(filePath, buffer, {
+          contentType: data.avatar.mime || 'image/jpeg',
+          upsert: true,
+        });
       if (uploadError) {
         console.log('Upload error:', uploadError);
         throw uploadError;
@@ -245,12 +290,12 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
         .from('avatars')
         .getPublicUrl(filePath);
 
-    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
 
-    set({
-      data: { ...data, avatar_url: avatarUrl },
-      loading: false,
-    });
+      set({
+        data: { ...data, avatar_url: avatarUrl },
+        loading: false,
+      });
       return true;
     } catch (error: any) {
       console.log('Avatar upload error:', error);
@@ -259,8 +304,89 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
     }
   },
 
-  reset: () =>
-    set({
+  uploadResume: async () => {
+    const { data, userId } = get();
+    if (!userId) {
+      console.log('No userId, skipping resume upload');
+      return false;
+    }
+
+    set({ loading: true, error: null });
+
+    const pdfType = 'application/pdf';
+
+    try {
+      const [result] = await pick({
+        type: [pdfType],
+      });
+
+      if (!result) {
+        set({ loading: false });
+        return false;
+      }
+
+      if (!result.type || result.type !== pdfType) {
+        set({ loading: false, error: 'Invalid file type. Only PDF is allowed.' });
+        return false;
+      }
+
+      if (!result.size || result.size > 1048576) {
+        set({ loading: false, error: 'File size exceeds 1MB limit.' });
+        return false;
+      }
+
+      const fileExt = result.name?.split('.').pop()?.toLowerCase() || 'pdf';
+      const fileName = `resume-${userId}.${fileExt}`;
+      const base64 = await RNFS.readFile(result.uri, 'base64');
+      const buffer = Buffer.from(base64, 'base64');
+      const filePath = fileName;
+
+      const { data: listData } = await supabase.storage
+        .from('resumes')
+        .list('', { search: `resume-${userId}.` });
+
+      if (listData && listData.length > 0) {
+        const filesToRemove = listData.map(f => f.name);
+        const { error: removeError } = await supabase.storage
+          .from('resumes')
+          .remove(filesToRemove);
+
+        if (removeError) {
+          console.log('Error removing existing resume:', removeError);
+          return false;
+        }
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from('resumes')
+        .upload(filePath, buffer, {
+          contentType: result.type || 'application/pdf',
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.log('Resume upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(filePath);
+
+      const resumeUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+      set({
+        data: { ...data, resume_url: resumeUrl },
+        loading: false,
+      });
+      return true;
+    } catch (error: any) {
+      console.log('Resume upload error:', error);
+      set({ loading: false, error: `Resume Upload Error: ${error.message}` });
+      return false;
+    }
+  },
+      reset: () => set({
       data: {
         full_name: '',
         email: '',
@@ -269,9 +395,23 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
         user_type: 'student',
         subscription_type: 'free',
         otp: null,
+        avatar: null,
+        avatar_url: '',
+        address: {
+          latitude: null,
+          longitude: null,
+          pincode: null,
+          city: null,
+        },
+        gender: '',
+        native_language: '',
+        other_languages: [],
+        bio: '',
+        resume_url: '',
       },
       step: 1,
       loading: false,
       error: null,
+      userId: null,
     }),
 }));
