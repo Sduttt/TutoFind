@@ -1,12 +1,13 @@
 import { View, Text, Button, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { useSignupStore } from '../../store/SignupStore';
+import { useNavigation } from '@react-navigation/native';
+import { UseAuthStore } from '../../store/AuthStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Routes } from '../../navigation/routes';
 
-type Props = {};
-
-const UserType = (props: Props) => {
-  const { step, nextStep, setData } = useSignupStore();
+const UserType = () => {
+  const navigation = useNavigation<any>();
+  const { step, nextStep, setData } = UseAuthStore();
 
   const handleNext = () => {
     nextStep();
@@ -48,7 +49,7 @@ const UserType = (props: Props) => {
 
       <View className="flex-row justify-center mt-8">
         <Text>Already have an account? </Text>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNIN)}>
           <Text className="text-blue-600 font-bold">Sign In</Text>
         </TouchableOpacity>
       </View>

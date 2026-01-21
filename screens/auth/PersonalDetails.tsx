@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSignupStore } from '../../store/SignupStore';
+import { UseAuthStore } from '../../store/AuthStore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
   faCamera,
@@ -38,7 +38,7 @@ const PersonalDetails = (props: Props) => {
     verifyEmail,
     resendEmailVerification,
     uploadAvatar,
-  } = useSignupStore();
+  } = UseAuthStore();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

@@ -35,7 +35,7 @@ interface SignupData {
   resume_name: string;
 }
 
-interface SignupStore {
+interface AuthStore {
   data: SignupData;
   step: number;
   loading: boolean;
@@ -47,6 +47,7 @@ interface SignupStore {
   prevStep: () => void;
   clearError: () => void;
   signup: () => Promise<boolean>;
+  signin: () => Promise<boolean>;
   uploadAvatar: () => Promise<boolean>;
   uploadResume: () => Promise<boolean>;
   updateProfile: () => Promise<boolean>;
@@ -55,7 +56,7 @@ interface SignupStore {
   reset: () => void;
 }
 
-export const useSignupStore = create<SignupStore>((set, get) => ({
+export const UseAuthStore = create<AuthStore>((set, get) => ({
   data: {
     full_name: '',
     email: '',
@@ -155,6 +156,51 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Signup Error: ${error.message}` });
+      return false;
+    }
+  },
+
+  signin: async () => {
+    const { data } = get();
+    set({ loading: true, error: null });
+
+    if (!data.email.trim()) {
+      set({
+        loading: false,
+        error: 'Signin Validation Error: Email is required.',
+      });
+      console.log('Signin Validation Error: Email is required.');
+      return false;
+    }
+    if (!data.password.trim()) {
+      set({
+        loading: false,
+        error: 'Signin Validation Error: Password is required.',
+      });
+      console.log('Signin Validation Error: Password is required.');
+      return false;
+    }
+
+    set({ loading: true, error: null });
+
+    try {
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        });
+
+      if (authError) {
+        console.log(authError);
+        throw authError;
+      } else {
+        console.log('Signin successful:', authData);
+      }
+
+      set({ loading: false, userId: authData.user?.id || null });
+      return true;
+    } catch (error: any) {
+      set({ loading: false, error: `Signin Error: ${error.message}` });
       return false;
     }
   },

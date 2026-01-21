@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSignupStore } from '../../store/SignupStore';
+import { UseAuthStore } from '../../store/AuthStore';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faLocation } from '@fortawesome/free-solid-svg-icons';
 import Geolocation from '@react-native-community/geolocation';
@@ -21,7 +21,7 @@ const OtherDetails = () => {
   const [nativeLang, setNativeLang] = useState('');
   const [bio, setBio] = useState('');
   const { prevStep, setData, updateProfile, data, uploadResume } =
-    useSignupStore();
+    UseAuthStore();
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
 

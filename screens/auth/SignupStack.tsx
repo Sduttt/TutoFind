@@ -1,7 +1,7 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect } from 'react';
 import * as Progress from 'react-native-progress';
-import { useSignupStore } from '../../store/SignupStore';
+import { UseAuthStore } from '../../store/AuthStore';
 import UserType from './UserType';
 import PersonalDetails from './PersonalDetails';
 import OtherDetails from './OtherDetails';
@@ -10,7 +10,7 @@ type Props = {};
 
 const SignupStack = (props: Props) => {
   const [progress, setProgress] = React.useState(0.33);
-  const { step } = useSignupStore();
+  const { step } = UseAuthStore();
 
   useEffect(() => {
     setProgress(step / 3);
