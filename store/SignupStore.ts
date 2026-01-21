@@ -32,6 +32,7 @@ interface SignupData {
   other_languages: string[];
   bio: string;
   resume_url: string;
+  resume_name: string;
 }
 
 interface SignupStore {
@@ -77,6 +78,7 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
     other_languages: [],
     bio: '',
     resume_url: '',
+    resume_name: '',
   },
   step: 1,
   loading: false,
@@ -163,8 +165,8 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
 
     try {
       await supabase
-      .from('profiles')
-      .update({
+        .from('profiles')
+        .update({
           user_type: data.user_type,
           subscription_type: data.subscription_type,
           full_name: data.full_name,
@@ -182,16 +184,14 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
         .eq('id', get().userId);
 
       set({ loading: false });
-      Alert.alert(
-        'Success',
-        'Profile updated successfully!',
-        [{ 
+      Alert.alert('Success', 'Profile updated successfully!', [
+        {
           text: 'View Profile',
           onPress: () => {
             //TODO: Navigate to profile screen
-          }
-        }]
-      )
+          },
+        },
+      ]);
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Profile Update Error: ${error.message}` });
@@ -200,7 +200,6 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
   },
 
   verifyEmail: async (email: string, otp: string) => {
-    
     set({ loading: true, error: null });
 
     try {
@@ -313,6 +312,23 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
 
     set({ loading: true, error: null });
 
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+    console.log('Current Session:', session);
+    console.log('Session User ID:', session?.user?.id);
+    console.log('Store User ID:', userId);
+
+    if (!session?.user) {
+      console.log('No active session found during resume upload');
+      set({
+        loading: false,
+        error: 'Authentication error: Please log in again.',
+      });
+      return false;
+    }
+
     const pdfType = 'application/pdf';
 
     try {
@@ -326,7 +342,10 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
       }
 
       if (!result.type || result.type !== pdfType) {
-        set({ loading: false, error: 'Invalid file type. Only PDF is allowed.' });
+        set({
+          loading: false,
+          error: 'Invalid file type. Only PDF is allowed.',
+        });
         return false;
       }
 
@@ -335,32 +354,18 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
         return false;
       }
 
-      const fileExt = result.name?.split('.').pop()?.toLowerCase() || 'pdf';
-      const fileName = `resume-${userId}.${fileExt}`;
+      get().setData('resume_name', result.name || 'resume.pdf');
+
+      const fileName = 'resume.pdf';
+      const filePath = `${userId}/${fileName}`;
       const base64 = await RNFS.readFile(result.uri, 'base64');
       const buffer = Buffer.from(base64, 'base64');
-      const filePath = fileName;
 
-      const { data: listData } = await supabase.storage
-        .from('resumes')
-        .list('', { search: `resume-${userId}.` });
-
-      if (listData && listData.length > 0) {
-        const filesToRemove = listData.map(f => f.name);
-        const { error: removeError } = await supabase.storage
-          .from('resumes')
-          .remove(filesToRemove);
-
-        if (removeError) {
-          console.log('Error removing existing resume:', removeError);
-          return false;
-        }
-      }
-
+      // We can skip listing/removing because we use a fixed filename per user with upsert: true
       const { error: uploadError } = await supabase.storage
         .from('resumes')
         .upload(filePath, buffer, {
-          contentType: result.type || 'application/pdf',
+          contentType: 'application/pdf',
           upsert: true,
         });
 
@@ -386,7 +391,8 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
       return false;
     }
   },
-      reset: () => set({
+  reset: () =>
+    set({
       data: {
         full_name: '',
         email: '',
@@ -397,6 +403,7 @@ export const useSignupStore = create<SignupStore>((set, get) => ({
         otp: null,
         avatar: null,
         avatar_url: '',
+        resume_name: '',
         address: {
           latitude: null,
           longitude: null,

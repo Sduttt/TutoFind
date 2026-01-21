@@ -32,6 +32,7 @@ const PersonalDetails = (props: Props) => {
     data,
     error,
     nextStep,
+    prevStep,
     setData,
     signup,
     verifyEmail,
@@ -367,12 +368,21 @@ const PersonalDetails = (props: Props) => {
             ) : null}
           </View>
           {/* Signup */}
-          <View className="mb-8">
+          <View className="mb-4">
             <TouchableOpacity
               onPress={UserSignup}
               className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
             >
               <Text className="text-white font-bold text-lg">Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="mb-8">
+            <TouchableOpacity
+              onPress={prevStep}
+              className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700"
+            >
+              <Text className="text-white font-bold text-lg">Back</Text>
             </TouchableOpacity>
           </View>
           {/* Otp */}
@@ -384,62 +394,61 @@ const PersonalDetails = (props: Props) => {
           >
             <View className="bg-black/50 flex-1 justify-center items-center">
               <View className="mt-8 items-center bg-white rounded-xl p-6 mx-4 shadow-lg">
-                {
-                  error ? (
-                    <>
-                      <Text className="text-red-500 text-lg font-semibold mb-4">
-                        Signup Failed
+                {error ? (
+                  <>
+                    <Text className="text-red-500 text-lg font-semibold mb-4">
+                      Signup Failed
+                    </Text>
+                    <Text className="text-gray-700 mb-6">{error}</Text>
+                    <TouchableOpacity
+                      onPress={() => setIsModalVisible(false)}
+                      className="bg-button rounded-xl py-3 px-6 items-center shadow-lg active:bg-blue-700"
+                    >
+                      <Text className="text-white font-bold text-lg">
+                        Close
                       </Text>
-                      <Text className="text-gray-700 mb-6">{error}</Text>
-                      <TouchableOpacity
-                        onPress={() => setIsModalVisible(false)}
-                        className="bg-button rounded-xl py-3 px-6 items-center shadow-lg active:bg-blue-700"
-                      >
-                        <Text className="text-white font-bold text-lg">
-                          Close
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-2xl font-bold mb-4">
+                      Verify Your Email
+                    </Text>
+                    <Text className="text-center text-gray-700 mb-6 px-8">
+                      We sent an OTP to your email address:{data.email} . Please
+                      enter it to verify your account.
+                    </Text>
+                    <TextInput
+                      className="w-48 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center text-gray-800 text-base mb-4"
+                      placeholder="Enter OTP"
+                      placeholderTextColor="#9CA3AF"
+                      keyboardType="numeric"
+                      maxLength={8}
+                      onChangeText={text => setData('otp', text)}
+                    />
+                    {data.otp && data.otp.trim().length !== 8 && (
+                      <Text className="text-red-500">
+                        Please enter a valid 8-digit OTP
+                      </Text>
+                    )}
+                    {!otpVerified && error && (
+                      <>
+                        <Text className="text-red-500 mb-2">
+                          OTP Verification Failed: {error}
                         </Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <>
-                      <Text className="text-2xl font-bold mb-4">
-                        Verify Your Email
-                      </Text>
-                      <Text className="text-center text-gray-700 mb-6 px-8">
-                        We sent an OTP to your email address:{data.email} . Please enter it to
-                        verify your account.
-                      </Text>
-                      <TextInput
-                        className="w-48 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center text-gray-800 text-base mb-4"
-                        placeholder="Enter OTP"
-                        placeholderTextColor="#9CA3AF"
-                        keyboardType="numeric"
-                        maxLength={8}
-                        onChangeText={text => setData('otp', text)}
-                      />
-                      {data.otp && data.otp.trim().length !== 8 && (
-                        <Text className="text-red-500">
-                          Please enter a valid 8-digit OTP
-                        </Text>
-                      )}
-                      {!otpVerified && error && (
-                        <>
-                          <Text className="text-red-500 mb-2">
-                            OTP Verification Failed: {error}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={OtpResend}
-                            className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-2/3"
-                          >
-                            <Text className="text-white font-bold text-lg">
-                              Resend OTP
-                            </Text>
-                          </TouchableOpacity>
-                        </>
-                      )}
-
-                      <View className="flex-row mt-6">
                         <TouchableOpacity
+                          onPress={OtpResend}
+                          className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-2/3"
+                        >
+                          <Text className="text-white font-bold text-lg">
+                            Resend OTP
+                          </Text>
+                        </TouchableOpacity>
+                      </>
+                    )}
+
+                    <View className="flex-row mt-6">
+                      <TouchableOpacity
                         onPress={EmailVerification}
                         className="bg-button rounded-xl px-6 py-4 items-center shadow-lg active:bg-blue-700 mt-2 w-1/2 mr-2"
                       >
@@ -455,10 +464,9 @@ const PersonalDetails = (props: Props) => {
                           Resend OTP
                         </Text>
                       </TouchableOpacity>
-                      </View>
-                    </>
-                  )
-                }
+                    </View>
+                  </>
+                )}
               </View>
             </View>
           </Modal>
@@ -471,7 +479,7 @@ const PersonalDetails = (props: Props) => {
         enablePanDownToClose={true}
         onClose={() => setIsSheetOpen(false)}
         backgroundStyle={{
-          backgroundColor: '#ffffff',
+          backgroundColor: '#aab7c9ae',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
 
@@ -485,12 +493,12 @@ const PersonalDetails = (props: Props) => {
           elevation: 25,
         }}
       >
-        <BottomSheetView className="flex-row justify-center items-center">
-          <TouchableOpacity onPress={CapturePhotoFromCam} className="mx-4">
-            <FontAwesomeIcon icon={faCamera} size={48} color="#9CA3AF" />
+        <BottomSheetView className="flex-row justify-center items-center mb-6">
+          <TouchableOpacity onPress={CapturePhotoFromCam} className="mx-4 mb-2">
+            <FontAwesomeIcon icon={faCamera} size={48} color="#144497ff" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={UploadFromGlry} className="mx-4">
-            <FontAwesomeIcon icon={faFolder} size={48} color="#9CA3AF" />
+          <TouchableOpacity onPress={UploadFromGlry} className="mx-4 mb-2">
+            <FontAwesomeIcon icon={faFolder} size={48} color="#144497ff" />
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
