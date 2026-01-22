@@ -1,6 +1,3 @@
-// TODO 1-> Show wrong email or password error to user
-// TODO 2-> Add forgot password ooption
-
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,14 +15,16 @@ const SignIn = ({ navigation }: any) => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
 
-  const { signin, setData, data } = UseAuthStore();
+  const { signin, setData, sendPasswordResetMail, data } = UseAuthStore();
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6 mt-0 align-center justify-center">
       <Text className="text-3xl text-center font-bold text-blue-600 mb-8">
-        Sign In
+        {forgotPassword ? `Reset Password` : `Sign In`}
       </Text>
+
       <View className="mb-4">
         {/* <Text className="text-gray-700 font-semibold mb-2 ml-1">
           Email Address
@@ -51,55 +50,84 @@ const SignIn = ({ navigation }: any) => {
           <Text className="text-red-500 mt-2">{emailError}</Text>
         ) : null}
       </View>
-      <View className="mb-4">
-        {/* <Text className="text-gray-700 font-semibold mb-2 ml-1">Password</Text> */}
-        <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:bg-white">
-          <View className="mr-3">
-            <FontAwesomeIcon icon={faLock} size={18} color="#9CA3AF" />
-          </View>
-          <TextInput
-            className="flex-1 text-gray-800 text-base"
-            placeholder="Enter your password"
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry={!showPassword}
-            value={data.password}
-            onChangeText={text => {
-              setData('password', text);
-            }}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            className="ml-2"
-          >
-            <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
-              size={18}
-              color="#9CA3AF"
+
+      {!forgotPassword && (
+        <View className="mb-4">
+          <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:bg-white">
+            <View className="mr-3">
+              <FontAwesomeIcon icon={faLock} size={18} color="#9CA3AF" />
+            </View>
+            <TextInput
+              className="flex-1 text-gray-800 text-base"
+              placeholder="Enter your password"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showPassword}
+              value={data.password}
+              onChangeText={text => {
+                setData('password', text);
+              }}
             />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              className="ml-2"
+            >
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                size={18}
+                color="#9CA3AF"
+              />
+            </TouchableOpacity>
+          </View>
+          {passwordError ? (
+            <Text className="text-red-500">{passwordError}</Text>
+          ) : null}
+
+          {!forgotPassword && (
+            <View className="flex-row justify-center mt-2">
+              <Text>Forgot Password? </Text>
+              <TouchableOpacity onPress={() => setForgotPassword(true)}>
+                <Text className="text-blue-600 font-bold">Reset Password</Text>
+              </TouchableOpacity>
+            </View>)}
         </View>
-        {passwordError ? (
-          <Text className="text-red-500">{passwordError}</Text>
-        ) : null}
-      </View>
+      )}
+      {
+        forgotPassword ? (
+          <View className="mb-4">
+            <TouchableOpacity
+              onPress={() => {
+                sendPasswordResetMail();
+              }}
+              className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
+            >
+              <Text className="text-white font-bold text-lg">Send Link</Text>
+            </TouchableOpacity>
+          </View>) : (
+          <View className="mb-4">
+            <TouchableOpacity
+              onPress={() => {
+                signin();
+              }}
+              className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
+            >
+              <Text className="text-white font-bold text-lg">Sign In</Text>
+            </TouchableOpacity>
+          </View>)
+      }
 
-      <View className="mb-4">
-        <TouchableOpacity
-          onPress={() => {
-            signin();
-          }}
-          className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
-        >
-          <Text className="text-white font-bold text-lg">Sign In</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View className="flex-row justify-center mt-8">
-        <Text>New User? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNUP)}>
-          <Text className="text-blue-600 font-bold">Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+      {forgotPassword ? (
+        <View className="flex-row justify-center mt-2">
+          <Text>Or </Text>
+          <TouchableOpacity onPress={() => setForgotPassword(false)}>
+            <Text className="text-blue-600 font-bold">Sign In</Text>
+          </TouchableOpacity>
+        </View>) :
+        (<View className="flex-row justify-center mt-2">
+          <Text>New User? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNUP)}>
+            <Text className="text-blue-600 font-bold">Sign Up</Text>
+          </TouchableOpacity>
+        </View>)}
     </SafeAreaView>
   );
 };

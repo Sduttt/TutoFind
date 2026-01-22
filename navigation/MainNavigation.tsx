@@ -12,6 +12,10 @@ const MainNavigation = () => {
     >
       <Stack.Screen name={Routes.SIGNIN} component={Screens.SIGNIN_SCREEN} />
       <Stack.Screen name={Routes.SIGNUP} component={Screens.SIGNUP_SCREEN} />
+      <Stack.Screen
+        name={Routes.RESET_PASSWORD}
+        component={Screens.RESET_PASSWORD_SCREEN}
+      />
     </Stack.Navigator>
   );
 };

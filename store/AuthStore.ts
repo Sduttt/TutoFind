@@ -53,6 +53,8 @@ interface AuthStore {
   updateProfile: () => Promise<boolean>;
   verifyEmail: (email: string, otp: string) => Promise<boolean>;
   resendEmailVerification: (email: string) => Promise<boolean>;
+  sendPasswordResetMail: () => Promise<boolean>;
+  passwordReset: () => Promise<boolean>;
   reset: () => void;
 }
 
@@ -437,6 +439,85 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       return false;
     }
   },
+
+  sendPasswordResetMail: async () => {
+    const { data } = get();
+    set({ loading: true, error: null });
+
+    if (!data.email.trim()) {
+      set({
+        loading: false,
+        error: 'Password Reset Validation Error: Email is required.',
+      });
+      console.log('Password Reset Validation Error: Email is required.');
+      return false;
+    }
+
+    set({ loading: true, error: null });
+
+    try {
+      const { data: resetData, error: resetError } =
+        await supabase.auth.resetPasswordForEmail(data.email, {
+          redirectTo: 'com.tutofind://reset-password',
+        });
+      if (resetError) {
+        console.log(resetError);
+        Alert.alert('Error', `Failed to send password reset email: ${resetError.message}`);
+        throw resetError;
+      } else {
+        console.log('Password reset email sent:', resetData);
+      }
+
+      set({ loading: false });
+      Alert.alert(
+        'Success!!',
+        `Password reset email sent successfully to ${data.email}.`,
+      );
+      return true;
+    } catch (error: any) {
+      set({ loading: false, error: `Password Reset Error: ${error.message}` });
+      return false;
+    }
+  },
+
+  passwordReset: async () => {
+    const { data } = get();
+    set({ loading: true, error: null });
+
+    if (!data.password.trim()) {
+      set({
+        loading: false,
+        error: 'Password Reset Validation Error: Password is required.',
+      });
+      console.log('Password Reset Validation Error: Password is required.');
+      return false;
+    }
+
+    set({ loading: true, error: null });
+
+    try {
+      const { data: resetData, error: resetError } =
+        await supabase.auth.updateUser({
+          password: data.password,
+        });
+      if (resetError) {
+        console.log(resetError);
+        throw resetError;
+      } else {
+        console.log('Password reset successful:', resetData);
+      }
+
+      set({ loading: false });
+      Alert.alert(
+        'Success!!',
+        `Password has been reset successfully.`,
+      );
+      return true;
+    } catch (error: any) {
+      set({ loading: false, error: `Password Reset Error: ${error.message}` });
+    } return false;
+  },
+
   reset: () =>
     set({
       data: {
