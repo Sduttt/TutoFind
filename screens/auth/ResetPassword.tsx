@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { UseAuthStore } from '../../store/AuthStore';
 import { faEye, faEyeSlash, faLock } from '@fortawesome/free-solid-svg-icons';
 import { Routes } from '../../navigation/routes';
+import Components from '../../components/components';
 
 const ResetPassword = ({ navigation }: any) => {
   const [passwordError, setPasswordError] = useState('');
@@ -13,7 +14,7 @@ const ResetPassword = ({ navigation }: any) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-  const { passwordReset, setData, data } = UseAuthStore();
+  const { passwordReset, setData, loading, data } = UseAuthStore();
 
   const UpdatePassword = () => {
     passwordReset();
@@ -21,15 +22,16 @@ const ResetPassword = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-      if (confirmPassword && data.password && confirmPassword !== data.password) {
-        setConfirmPasswordError('Passwords do not match.');
-      } else {
-        setConfirmPasswordError('');
-      }
-    }, [confirmPassword, data.password]);
+    if (confirmPassword && data.password && confirmPassword !== data.password) {
+      setConfirmPasswordError('Passwords do not match.');
+    } else {
+      setConfirmPasswordError('');
+    }
+  }, [confirmPassword, data.password]);
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6 mt-0 align-center justify-center">
+      {loading && <Components.LOADING_COMP />}
       <Text className="text-3xl text-center font-bold text-blue-600 mb-8">
         Reset Password
       </Text>

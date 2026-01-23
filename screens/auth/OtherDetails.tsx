@@ -15,12 +15,13 @@ import { faLocation } from '@fortawesome/free-solid-svg-icons';
 import Geolocation from '@react-native-community/geolocation';
 import DropDownPicker from 'react-native-dropdown-picker';
 import languages from '../../data/languages.json';
+import Components from '../../components/components';
 
 const OtherDetails = () => {
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other' | ''>('');
   const [nativeLang, setNativeLang] = useState('');
   const [bio, setBio] = useState('');
-  const { prevStep, setData, updateProfile, data, uploadResume } =
+  const { prevStep, setData, updateProfile, data, loading, uploadResume } =
     UseAuthStore();
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
@@ -90,6 +91,7 @@ const OtherDetails = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      {loading && <Components.LOADING_COMP />}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}

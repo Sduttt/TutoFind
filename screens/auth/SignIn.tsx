@@ -10,6 +10,7 @@ import {
   faLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { Routes } from '../../navigation/routes';
+import Components from '../../components/components';
 
 const SignIn = ({ navigation }: any) => {
   const [emailError, setEmailError] = useState('');
@@ -17,10 +18,12 @@ const SignIn = ({ navigation }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
 
-  const { signin, setData, sendPasswordResetMail, data } = UseAuthStore();
+  const { signin, setData, sendPasswordResetMail, data, loading } =
+    UseAuthStore();
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6 mt-0 align-center justify-center">
+      {loading && <Components.LOADING_COMP />}
       <Text className="text-3xl text-center font-bold text-blue-600 mb-8">
         {forgotPassword ? `Reset Password` : `Sign In`}
       </Text>
@@ -88,32 +91,33 @@ const SignIn = ({ navigation }: any) => {
               <TouchableOpacity onPress={() => setForgotPassword(true)}>
                 <Text className="text-blue-600 font-bold">Reset Password</Text>
               </TouchableOpacity>
-            </View>)}
+            </View>
+          )}
         </View>
       )}
-      {
-        forgotPassword ? (
-          <View className="mb-4">
-            <TouchableOpacity
-              onPress={() => {
-                sendPasswordResetMail();
-              }}
-              className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
-            >
-              <Text className="text-white font-bold text-lg">Send Link</Text>
-            </TouchableOpacity>
-          </View>) : (
-          <View className="mb-4">
-            <TouchableOpacity
-              onPress={() => {
-                signin();
-              }}
-              className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
-            >
-              <Text className="text-white font-bold text-lg">Sign In</Text>
-            </TouchableOpacity>
-          </View>)
-      }
+      {forgotPassword ? (
+        <View className="mb-4">
+          <TouchableOpacity
+            onPress={() => {
+              sendPasswordResetMail();
+            }}
+            className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
+          >
+            <Text className="text-white font-bold text-lg">Send Link</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View className="mb-4">
+          <TouchableOpacity
+            onPress={() => {
+              signin();
+            }}
+            className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
+          >
+            <Text className="text-white font-bold text-lg">Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {forgotPassword ? (
         <View className="flex-row justify-center mt-2">
@@ -121,13 +125,15 @@ const SignIn = ({ navigation }: any) => {
           <TouchableOpacity onPress={() => setForgotPassword(false)}>
             <Text className="text-blue-600 font-bold">Sign In</Text>
           </TouchableOpacity>
-        </View>) :
-        (<View className="flex-row justify-center mt-2">
+        </View>
+      ) : (
+        <View className="flex-row justify-center mt-2">
           <Text>New User? </Text>
           <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNUP)}>
             <Text className="text-blue-600 font-bold">Sign Up</Text>
           </TouchableOpacity>
-        </View>)}
+        </View>
+      )}
     </SafeAreaView>
   );
 };

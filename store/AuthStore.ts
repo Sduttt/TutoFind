@@ -462,7 +462,10 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
         });
       if (resetError) {
         console.log(resetError);
-        Alert.alert('Error', `Failed to send password reset email: ${resetError.message}`);
+        Alert.alert(
+          'Error',
+          `Failed to send password reset email: ${resetError.message}`,
+        );
         throw resetError;
       } else {
         console.log('Password reset email sent:', resetData);
@@ -508,14 +511,12 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       }
 
       set({ loading: false });
-      Alert.alert(
-        'Success!!',
-        `Password has been reset successfully.`,
-      );
+      Alert.alert('Success!!', `Password has been reset successfully.`);
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Password Reset Error: ${error.message}` });
-    } return false;
+    }
+    return false;
   },
 
   reset: () =>

@@ -24,6 +24,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
+import Components from '../../components/components';
 
 type Props = {};
 
@@ -31,6 +32,7 @@ const PersonalDetails = (props: Props) => {
   const {
     data,
     error,
+    loading,
     nextStep,
     prevStep,
     setData,
@@ -195,6 +197,7 @@ const PersonalDetails = (props: Props) => {
 
   return (
     <View className="flex-1">
+      {loading && <Components.LOADING_COMP />}
       <KeyboardAvoidingView
         className="flex-1 px-6 mt-6"
         behavior="padding"
