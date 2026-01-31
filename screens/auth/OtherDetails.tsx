@@ -17,11 +17,16 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import languages from '../../data/languages.json';
 import Components from '../../components/components';
 
+import { Routes } from '../../navigation/routes';
+import { useNavigation } from '@react-navigation/native';
+import { useUserProfile } from '../../hooks/useUserProfile';
+
 const OtherDetails = () => {
+  const navigation = useNavigation<any>();
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other' | ''>('');
   const [nativeLang, setNativeLang] = useState('');
   const [bio, setBio] = useState('');
-  const { prevStep, setData, updateProfile, data, loading, uploadResume } =
+  const { prevStep, setData, updateProfile, data, loading } =
     UseAuthStore();
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
@@ -71,7 +76,7 @@ const OtherDetails = () => {
     );
   };
 
-  const handleCompleteProfile = () => {
+  const handleCompleteProfile = async () => {
     // Set individual fields in the global store
     setData('gender', gender);
     setData('native_language', nativeLang);
@@ -86,7 +91,12 @@ const OtherDetails = () => {
     });
 
     // Now update the profile in Supabase
-    updateProfile();
+    const success = await updateProfile();
+    if (success) {
+      if (user_type === 'tutor') {
+        navigation.navigate(Routes.TUTOR_DASHBOARD);
+      }
+    }
   };
 
   return (
@@ -288,7 +298,7 @@ const OtherDetails = () => {
           </View>
 
           {/* Resume (Upload) */}
-          {user_type === 'tutor' && (
+          {/* {user_type === 'tutor' && (
             <View className="mb-8">
               <Text className="text-sm font-semibold text-gray-700 mb-2">
                 Resume
@@ -303,7 +313,7 @@ const OtherDetails = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-          )}
+          )} */}
 
           {/* Submit Button */}
           <TouchableOpacity

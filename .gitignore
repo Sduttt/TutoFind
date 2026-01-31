@@ -75,5 +75,6 @@ yarn-error.log
 !.yarn/versions
 
 .env
+dummy.json
 
 .github
