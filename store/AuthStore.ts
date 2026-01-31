@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase';
 import { Image as PickerImage } from 'react-native-image-crop-picker';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
-import { pick } from '@react-native-documents/picker';
 import { Alert } from 'react-native';
+
 
 declare global {
   const atob: (input: string) => string;
@@ -31,7 +31,7 @@ interface SignupData {
   native_language: string;
   other_languages: string[];
   bio: string;
-  resume_url: string;
+  // resume_url: string;
   resume_name: string;
 }
 
@@ -49,13 +49,15 @@ interface AuthStore {
   signup: () => Promise<boolean>;
   signin: () => Promise<boolean>;
   uploadAvatar: () => Promise<boolean>;
-  uploadResume: () => Promise<boolean>;
+  // uploadResume: () => Promise<boolean>;
   updateProfile: () => Promise<boolean>;
   verifyEmail: (email: string, otp: string) => Promise<boolean>;
   resendEmailVerification: (email: string) => Promise<boolean>;
   sendPasswordResetMail: () => Promise<boolean>;
   passwordReset: () => Promise<boolean>;
   reset: () => void;
+  fetchProfile: () => Promise<boolean>;
+  signout: () => Promise<void>;
 }
 
 export const UseAuthStore = create<AuthStore>((set, get) => ({
@@ -200,12 +202,32 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       }
 
       set({ loading: false, userId: authData.user?.id || null });
+
+      // Fetch user profile to get user_type and other details
+      if (authData.user?.id) {
+        await get().fetchProfile();
+      }
+
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Signin Error: ${error.message}` });
       return false;
     }
   },
+
+  signout: async () => {
+    try{
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.log('Signout Error:', error);
+        throw error;
+      }
+      console.log("Signout Successful");
+    } catch (error: any) {
+      console.log('Signout Error:', error);
+    }
+  },
+
 
   updateProfile: async () => {
     const { data } = get();
@@ -226,20 +248,20 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
           native_language: data.native_language,
           other_languages: data.other_languages,
           bio: data.bio,
-          resume_url: data.resume_url || null,
+          // resume_url: data.resume_url || null,
           address: data.address,
         })
         .eq('id', get().userId);
 
       set({ loading: false });
-      Alert.alert('Success', 'Profile updated successfully!', [
-        {
-          text: 'View Profile',
-          onPress: () => {
-            //TODO: Navigate to profile screen
-          },
-        },
-      ]);
+      // Alert.alert('Success', 'Profile updated successfully!', [
+      //   {
+      //     text: 'View Profile',
+      //     onPress: () => {
+      //       navigation.navigate(Routes.TUTOR_DASHBOARD);
+      //     },
+      //   },
+      // ]);
       return true;
     } catch (error: any) {
       set({ loading: false, error: `Profile Update Error: ${error.message}` });
@@ -351,94 +373,114 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  uploadResume: async () => {
-    const { data, userId } = get();
-    if (!userId) {
-      console.log('No userId, skipping resume upload');
-      return false;
-    }
+  // uploadResume: async () => {
+  //   //TODO: DEBUG RESUME UPLOAD
+  //   const { data, userId } = get();
+  //   if (!userId) {
+  //     console.log('No userId, skipping resume upload');
+  //     return false;
+  //   }
 
-    set({ loading: true, error: null });
+  //   set({ loading: true, error: null });
 
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-    console.log('Current Session:', session);
-    console.log('Session User ID:', session?.user?.id);
-    console.log('Store User ID:', userId);
+  //   const {
+  //     data: { session },
+  //     error: sessionError,
+  //   } = await supabase.auth.getSession();
+  //   console.log('Current Session:', session);
+  //   console.log('Session User ID:', session?.user?.id);
+  //   console.log('Store User ID:', userId);
 
-    if (!session?.user) {
-      console.log('No active session found during resume upload');
-      set({
-        loading: false,
-        error: 'Authentication error: Please log in again.',
-      });
-      return false;
-    }
+  //   if (!session?.user) {
+  //     console.log('No active session found during resume upload');
+  //     set({
+  //       loading: false,
+  //       error: 'Authentication error: Please log in again.',
+  //     });
+  //     return false;
+  //   }
 
-    const pdfType = 'application/pdf';
+  //   const pdfType = 'application/pdf';
 
-    try {
-      const [result] = await pick({
-        type: [pdfType],
-      });
+  //   try {
+  //     const [result] = await pick({
+  //       type: [pdfType],
+  //     });
 
-      if (!result) {
-        set({ loading: false });
-        return false;
-      }
+  //     if (!result) {
+  //       set({ loading: false });
+  //       return false;
+  //     }
 
-      if (!result.type || result.type !== pdfType) {
-        set({
-          loading: false,
-          error: 'Invalid file type. Only PDF is allowed.',
-        });
-        return false;
-      }
+  //     if (!result.type || result.type !== pdfType) {
+  //       set({
+  //         loading: false,
+  //         error: 'Invalid file type. Only PDF is allowed.',
+  //       });
+  //       return false;
+  //     }
 
-      if (!result.size || result.size > 1048576) {
-        set({ loading: false, error: 'File size exceeds 1MB limit.' });
-        return false;
-      }
+  //     if (!result.size || result.size > 1048576) {
+  //       set({ loading: false, error: 'File size exceeds 1MB limit.' });
+  //       return false;
+  //     }
 
-      get().setData('resume_name', result.name || 'resume.pdf');
+  //     get().setData('resume_name', result.name || 'resume.pdf');
 
-      const fileName = 'resume.pdf';
-      const filePath = `${userId}/${fileName}`;
-      const base64 = await RNFS.readFile(result.uri, 'base64');
-      const buffer = Buffer.from(base64, 'base64');
+  //     const fileName = 'resume.pdf';
+  //     const filePath = `${userId}/${fileName}`;
+  //     const base64 = await RNFS.readFile(result.uri, 'base64');
+  //     const buffer = Buffer.from(base64, 'base64');
 
-      // We can skip listing/removing because we use a fixed filename per user with upsert: true
-      const { error: uploadError } = await supabase.storage
-        .from('resumes')
-        .upload(filePath, buffer, {
-          contentType: 'application/pdf',
-          upsert: true,
-        });
+  //     const response = await fetch(result.uri);
+  //     const blob = await response.blob();
 
-      if (uploadError) {
-        console.log('Resume upload error:', uploadError);
-        throw uploadError;
-      }
+  //     // const { error: uploadError } = await supabase.storage
+  //     //   .from('resumes')
+  //     //   .upload(`${userId}/resume.pdf`, blob, {
+  //     //     contentType: 'application/pdf',
+  //     //     upsert: true,
+  //     //   });
 
-      const { data: urlData } = supabase.storage
-        .from('resumes')
-        .getPublicUrl(filePath);
+  //     // We can skip listing/removing because we use a fixed filename per user with upsert: true
+  //     const { error: uploadError } = await supabase.storage
+  //       .from('resumes')
+  //       .upload(filePath, buffer, {
+  //         contentType: 'application/pdf',
+  //         upsert: true,
+  //       });
 
-      const resumeUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+  //     if (uploadError) {
+  //       console.log('Resume upload error:', uploadError);
+  //       throw uploadError;
+  //     }
 
-      set({
-        data: { ...data, resume_url: resumeUrl },
-        loading: false,
-      });
-      return true;
-    } catch (error: any) {
-      console.log('Resume upload error:', error);
-      set({ loading: false, error: `Resume Upload Error: ${error.message}` });
-      return false;
-    }
-  },
+  //     const { data: urlData } = supabase.storage
+  //       .from('resumes')
+  //       .getPublicUrl(filePath);
+
+  //     const resumeUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+  //     set({
+  //       data: { ...data, resume_url: resumeUrl },
+  //       loading: false,
+  //     });
+
+  //     // const { data: urlData } = supabase.storage
+  //     //   .from('resumes')
+  //     //   .getPublicUrl(`${userId}/resume.pdf`);
+
+  //     // set({
+  //     //   data: { ...data, resume_url: urlData.publicUrl },
+  //     //   loading: false,
+  //     // });
+  //     return true;
+  //   } catch (error: any) {
+  //     console.log('Resume upload error:', error);
+  //     set({ loading: false, error: `Resume Upload Error: ${error.message}` });
+  //     return false;
+  //   }
+  // },
 
   sendPasswordResetMail: async () => {
     const { data } = get();
@@ -519,6 +561,34 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
     return false;
   },
 
+  fetchProfile: async () => {
+    const { userId } = get();
+    if (!userId) return false;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.log('Error fetching profile:', error);
+        return false;
+      }
+
+      if (data) {
+        set(state => ({
+          data: { ...state.data, ...data },
+        }));
+        return true;
+      }
+    } catch (error: any) {
+      console.log('Fetch Profile Error:', error);
+    }
+    return false;
+  },
+
   reset: () =>
     set({
       data: {
@@ -542,7 +612,7 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
         native_language: '',
         other_languages: [],
         bio: '',
-        resume_url: '',
+        // resume_url: '',
       },
       step: 1,
       loading: false,
