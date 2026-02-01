@@ -1,0 +1,163 @@
+[
+  {
+    "id": 1,
+    "subject": "Mathematics",
+    "subject_line_2": ["Arithmetic", "Algebra", "Geometry", "Trigonometry", "Calculus", "Statistics"],
+    "levels": ["Class 1–5", "Class 6–8", "Class 9–10", "Class 11–12"],
+    "board": ["CBSE", "ICSE", "State Board", "IB", "IGCSE"]
+  },
+  {
+    "id": 2,
+    "subject": "Physics",
+    "subject_line_2": ["Mechanics", "Thermodynamics", "Optics", "Electromagnetism", "Modern Physics"],
+    "levels": ["Class 9–10", "Class 11–12"],
+    "board": ["CBSE", "ICSE", "State Board", "IB"]
+  },
+  {
+    "id": 3,
+    "subject": "Chemistry",
+    "subject_line_2": ["Organic", "Inorganic", "Physical"],
+    "levels": ["Class 9–10", "Class 11–12"],
+    "board": ["CBSE", "ICSE", "State Board", "IB"]
+  },
+  {
+    "id": 4,
+    "subject": "Biology",
+    "subject_line_2": ["Botany", "Zoology", "Human Biology"],
+    "levels": ["Class 9–10", "Class 11–12"],
+    "board": ["CBSE", "ICSE", "State Board"]
+  },
+  {
+    "id": 5,
+    "subject": "English",
+    "subject_line_2": ["Grammar", "Spoken English", "Literature", "Creative Writing"],
+    "levels": ["Primary", "Secondary", "Higher Secondary", "College"],
+    "board": ["CBSE", "ICSE", "State Board", "IB"]
+  },
+  {
+    "id": 6,
+    "subject": "Computer Science",
+    "subject_line_2": ["Programming Basics", "Data Structures", "Algorithms", "DBMS", "Operating Systems"],
+    "levels": ["Class 9–10", "Class 11–12", "Diploma", "Degree"],
+    "board": ["CBSE", "ICSE", "State Board", "University"]
+  },
+  {
+    "id": 7,
+    "subject": "Programming",
+    "subject_line_2": ["C", "C++", "Java", "Python", "JavaScript"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 8,
+    "subject": "Web Development",
+    "subject_line_2": ["HTML", "CSS", "React", "Node.js", "Backend Development"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 9,
+    "subject": "Mobile App Development",
+    "subject_line_2": ["Android", "iOS", "React Native", "Flutter"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 10,
+    "subject": "Electrical Engineering",
+    "subject_line_2": ["Circuit Theory", "Power Systems", "Control Systems", "Electrical Machines"],
+    "levels": ["Diploma", "Bachelors", "Masters"],
+    "board": ["University", "AICTE"]
+  },
+  {
+    "id": 11,
+    "subject": "Mechanical Engineering",
+    "subject_line_2": ["Thermodynamics", "Strength of Materials", "Fluid Mechanics", "Manufacturing"],
+    "levels": ["Diploma", "Bachelors", "Masters"],
+    "board": ["University", "AICTE"]
+  },
+  {
+    "id": 12,
+    "subject": "Civil Engineering",
+    "subject_line_2": ["Structural", "Geotechnical", "Transportation", "Environmental"],
+    "levels": ["Diploma", "Bachelors", "Masters"],
+    "board": ["University", "AICTE"]
+  },
+  {
+    "id": 13,
+    "subject": "Guitar",
+    "subject_line_2": ["Acoustic", "Electric", "Bass", "Classical"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 14,
+    "subject": "Piano",
+    "subject_line_2": ["Keyboard", "Classical Piano", "Jazz Piano"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 15,
+    "subject": "Vocal Music",
+    "subject_line_2": ["Indian Classical", "Western Vocals", "Playback Singing"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 16,
+    "subject": "Dance",
+    "subject_line_2": ["Classical", "Hip Hop", "Contemporary", "Bollywood"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 17,
+    "subject": "Yoga",
+    "subject_line_2": ["Hatha Yoga", "Ashtanga Yoga", "Power Yoga", "Meditation"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 18,
+    "subject": "Swimming",
+    "subject_line_2": ["Freestyle", "Backstroke", "Breaststroke", "Butterfly"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 19,
+    "subject": "Cricket",
+    "subject_line_2": ["Batting", "Bowling", "Fielding", "All-rounder"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 20,
+    "subject": "Football",
+    "subject_line_2": ["Goalkeeping", "Defense", "Midfield", "Striker"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  },
+  {
+    "id": 21,
+    "subject": "Competitive Exams",
+    "subject_line_2": ["IIT-JEE", "NEET", "UPSC", "SSC", "Banking", "CAT", "GATE"],
+    "levels": ["Foundation", "Intermediate", "Advanced"],
+    "board": ["NTA", "UPSC", "IBPS", "AIIMS"]
+  },
+  {
+    "id": 22,
+    "subject": "Languages",
+    "subject_line_2": ["Hindi", "English", "French", "German", "Spanish"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": ["CBSE", "ICSE", "IB", "University"]
+  },
+  {
+    "id": 23,
+    "subject": "Drawing & Painting",
+    "subject_line_2": ["Sketching", "Watercolor", "Oil Painting", "Digital Art"],
+    "levels": ["Beginner", "Intermediate", "Advanced"],
+    "board": null
+  }
+]

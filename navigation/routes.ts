@@ -4,4 +4,5 @@ export const Routes = {
   RESET_PASSWORD: 'ResetPassword',
   TUTOR_DASHBOARD: 'TutorDashboard',
   ADD_USER_DETAILS: 'OtherDetails',
+  CREATE_POST: 'CreatePost',
 };

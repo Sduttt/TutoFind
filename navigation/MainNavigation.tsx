@@ -21,6 +21,10 @@ const MainNavigation = () => {
         name={Routes.TUTOR_DASHBOARD}
         component={Screens.TUTOR_DASHBOARD_SCREEN}
       />
+      <Stack.Screen
+        name={Routes.CREATE_POST}
+        component={Screens.CREATE_POST_SCREEN}
+      />
     </Stack.Navigator>
   );
 };

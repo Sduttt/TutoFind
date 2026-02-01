@@ -116,12 +116,12 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
 
           <View className="mx-4 mt-6 mb-20">
             {/* Posts sSection */}
-            <TouchableOpacity className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
+            <TouchableOpacity onPress={() => navigation.navigate(Routes.CREATE_POST)} className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
               <Text className="text-white font-bold text-lg">CREATE POST</Text>
             </TouchableOpacity>
 
             <TouchableOpacity className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
-              <Text className="text-white font-bold text-lg">VIEW POST</Text>
+              <Text className="text-white text-center w-full font-bold text-lg">VIEW POST</Text>
             </TouchableOpacity>
 
 
