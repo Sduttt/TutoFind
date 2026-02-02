@@ -64,5 +64,30 @@ export const useTutorPosts = () => {
     }
   };
 
-  return { createPost, loading, error };
+  const tutorGetPosts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const { data, error: fetchError } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('tutor_id', userId);
+      if (fetchError) {
+        console.error('Error fetching posts:', fetchError);
+        setError(fetchError.message);
+        setLoading(false);
+        return [];
+      }
+      console.log('Posts fetched successfully:', data);
+      setLoading(false);
+      return data;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return [];
+    }
+  };
+
+  return { createPost, tutorGetPosts, loading, error };
 };

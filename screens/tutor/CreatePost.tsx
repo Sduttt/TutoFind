@@ -12,6 +12,7 @@ import subjects from '../../data/subjects.json';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TextInput } from 'react-native-gesture-handler';
 import { useTutorPosts } from '../../hooks/useTutorPosts';
+import Components from '../../components/components';
 
 const CreatePost = ({ navigation }: any) => {
   const { createPost, loading, error } = useTutorPosts();
@@ -138,7 +139,7 @@ const CreatePost = ({ navigation }: any) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {loading && <Components.LOADING_COMP />}
       <Text className="text-2xl font-bold my-4">Create a New Post</Text>
 
       <View className="mb-4 flex-row items-center justify-between">

@@ -5,4 +5,5 @@ export const Routes = {
   TUTOR_DASHBOARD: 'TutorDashboard',
   ADD_USER_DETAILS: 'OtherDetails',
   CREATE_POST: 'CreatePost',
+  VIEW_POSTS: 'ViewPosts',
 };
