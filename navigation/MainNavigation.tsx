@@ -12,7 +12,10 @@ const MainNavigation = () => {
     >
       <Stack.Screen name={Routes.SIGNIN} component={Screens.SIGNIN_SCREEN} />
       <Stack.Screen name={Routes.SIGNUP} component={Screens.SIGNUP_SCREEN} />
-      <Stack.Screen name={Routes.ADD_USER_DETAILS} component={Screens.ADD_USER_DETAILS_SCREEN} />
+      <Stack.Screen
+        name={Routes.ADD_USER_DETAILS}
+        component={Screens.ADD_USER_DETAILS_SCREEN}
+      />
       <Stack.Screen
         name={Routes.RESET_PASSWORD}
         component={Screens.RESET_PASSWORD_SCREEN}
@@ -20,6 +23,14 @@ const MainNavigation = () => {
       <Stack.Screen
         name={Routes.TUTOR_DASHBOARD}
         component={Screens.TUTOR_DASHBOARD_SCREEN}
+      />
+      <Stack.Screen
+        name={Routes.CREATE_POST}
+        component={Screens.CREATE_POST_SCREEN}
+      />
+      <Stack.Screen
+        name={Routes.VIEW_POSTS}
+        component={Screens.VIEW_POSTS_SCREEN}
       />
     </Stack.Navigator>
   );

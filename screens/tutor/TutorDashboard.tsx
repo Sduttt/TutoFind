@@ -30,8 +30,8 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
 
   const secondaryLanguages = Array.isArray(user?.other_languages)
     ? user.other_languages
-      .map((code: string) => getLanguageName(code))
-      .join(', ')
+        .map((code: string) => getLanguageName(code))
+        .join(', ')
     : '';
 
   // Parse address if it's a string
@@ -109,28 +109,33 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
                 </Text>
               </View>
             </View>
-
-
-
           </View>
 
           <View className="mx-4 mt-6 mb-20">
             {/* Posts sSection */}
-            <TouchableOpacity className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(Routes.CREATE_POST)}
+              className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+            >
               <Text className="text-white font-bold text-lg">CREATE POST</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
-              <Text className="text-white font-bold text-lg">VIEW POST</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate(Routes.VIEW_POSTS)}
+              className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+            >
+              <Text className="text-white text-center w-full font-bold text-lg">
+                VIEW POST
+              </Text>
             </TouchableOpacity>
 
-
-            <TouchableOpacity onPress={
-              () => {
-                signout()
-                navigation.navigate(Routes.SIGNIN)
-              }
-            } className='bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8'>
+            <TouchableOpacity
+              onPress={() => {
+                signout();
+                navigation.navigate(Routes.SIGNIN);
+              }}
+              className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+            >
               <Text className="text-white font-bold text-lg">SIGN OUT</Text>
             </TouchableOpacity>
           </View>
