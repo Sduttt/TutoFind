@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useTutorPosts } from '../../hooks/useTutorPosts';
 import Components from '../../components/components';
@@ -14,38 +14,38 @@ const ViewPosts = ({ navigation }: { navigation: any }) => {
   const [postLoading, setPostLoading] = useState<boolean>(true);
   const [postError, setPostError] = useState<string | null>(null);
 
+  const fetchPosts = async () => {
+    try {
+      setPostLoading(true);
+      setPostError(null);
+      const result = await tutorGetPosts();
+      setPosts(result || []);
+    } catch (err) {
+      setPostError('Failed to fetch posts');
+      console.error('Error fetching posts:', err);
+    } finally {
+      setPostLoading(false);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      const fetchPosts = async () => {
-        try {
-          setPostLoading(true);
-          setPostError(null);
-          const result = await tutorGetPosts();
-          setPosts(result || []);
-        } catch (err) {
-          setPostError('Failed to fetch posts');
-          console.error('Error fetching posts:', err);
-        } finally {
-          setPostLoading(false);
-        }
-      };
-
       fetchPosts();
     }, []),
   );
 
   return (
-    <SafeAreaView className="p-4">
+    <SafeAreaView className="flex-1 p-4">
       {postLoading ? (
         <Components.LOADING_COMP />
       ) : postError ? (
         <Components.ERROR_COMP error={postError} />
       ) : posts.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-gray-500 text-lg">No Posts Available</Text>
+        <View className="justify-center items-center h-full">
+          <Text className="text-gray-500 font-bold text-3xl">No Posts Available</Text>
         </View>
       ) : (
-        <View className="">
+        <View>
           <Text className="text-2xl font-bold mb-4 text-center">{`Your Posts (${posts.length})`}</Text>
           {posts.map((post, index) => {
             let formattedDate = '';
@@ -70,7 +70,7 @@ const ViewPosts = ({ navigation }: { navigation: any }) => {
             }
             return (
               <Components.POST_CARD
-                key={index}
+                key={post.id ? String(post.id) : `post-${index}`}
                 subject={post.subject}
                 subjectLine={post.subject_line_2}
                 level={post.level}
@@ -84,6 +84,16 @@ const ViewPosts = ({ navigation }: { navigation: any }) => {
                 tutorImg={user?.avatar_url}
                 postDate={formattedDate}
                 totalViews={post.total_views}
+                tutorId={post.tutor_id}
+                postId={post.id}
+                isLive={post.isLive}
+                onDelete={fetchPosts}
+                onEdit={() =>
+                  navigation.navigate(Routes.CREATE_POST, {
+                    mode: 'edit',
+                    post,
+                  })
+                }
               />
             );
           })}

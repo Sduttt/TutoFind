@@ -1,18 +1,23 @@
-import { ImageSourcePropType } from "react-native";
-import { Timestamp } from "react-native-reanimated/lib/typescript/commonTypes";
+import { ImageSourcePropType } from 'react-native';
+import { Timestamp } from 'react-native-reanimated/lib/typescript/commonTypes';
 
 export interface PostType {
-    subject: String,
-    subjectLine: String,
-    level: String,
-    board: String,
-    desc: String,
-    minFees: String,
-    maxFees: String,
-    mode: String,
-    freeDemo: Boolean,
-    tutorName: String,
-    tutorImg: ImageSourcePropType,
-    postDate: String,
-    totalViews: String,
+  subject: any;
+  subjectLine: any;
+  level: any;
+  board: any;
+  desc: any;
+  minFees: any;
+  maxFees: any;
+  mode: any;
+  freeDemo: any;
+  tutorName: any;
+  tutorImg: ImageSourcePropType;
+  postDate: any;
+  totalViews: any;
+  tutorId: any;
+  postId: string;
+  isLive: boolean;
+  onDelete?: () => void;
+  onEdit?: () => void;
 }

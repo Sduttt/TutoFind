@@ -374,7 +374,6 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
   },
 
   // uploadResume: async () => {
-  //   //TODO: DEBUG RESUME UPLOAD
   //   const { data, userId } = get();
   //   if (!userId) {
   //     console.log('No userId, skipping resume upload');

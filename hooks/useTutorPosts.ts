@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UseAuthStore } from '../store/AuthStore';
 import { supabase } from '../lib/supabase';
+import { ToastAndroid } from 'react-native';
 
 interface Post {
   subject: string;
@@ -89,5 +90,105 @@ export const useTutorPosts = () => {
     }
   };
 
-  return { createPost, tutorGetPosts, loading, error };
+  const deletePost = async (postId: string) => {
+    try {
+      setLoading(true);
+      setError('');
+      const { data, error: deleteError } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId)
+        .eq('tutor_id', userId);
+      if (deleteError) {
+        console.error('Error deleting post:', deleteError);
+        setError(deleteError.message);
+        setLoading(false);
+        return false;
+      }
+      console.log('Post deleted successfully:', data);
+      tutorGetPosts();
+      ToastAndroid.show('Post deleted successfully', ToastAndroid.SHORT);
+      setLoading(false);
+      return true;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const publishUnpublishPost = async (postId: string, isLive: boolean) => {
+    try {
+      setLoading(true);
+      setError('');
+      const { data, error: updateError } = await supabase
+        .from('posts')
+        .update({ isLive: isLive })
+        .eq('id', postId)
+        .eq('tutor_id', userId);
+      if (updateError) {
+        console.error('Error unpublishing post:', updateError);
+        setError(updateError.message);
+        setLoading(false);
+        return false;
+      }
+      console.log('Post unpublished successfully:', data);
+      tutorGetPosts();
+      ToastAndroid.show('Post unpublished successfully', ToastAndroid.SHORT);
+      setLoading(false);
+      return true;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return false;
+    }
+  }
+
+  const updatePost = async (postId: string, updatedPost: Post) => {
+    try {
+      setLoading(true);
+      setError('');
+
+      if (!userId) {
+        setError('User not authenticated');
+        setLoading(false);
+        return false;
+      }
+
+      const { data, error: updateError } = await supabase
+        .from('posts')
+        .update({
+          subject: updatedPost.subject,
+          subject_line_2: updatedPost.subject_line_2,
+          description: updatedPost.description,
+          level: updatedPost.level,
+          board: updatedPost.board || null,
+          mode_of_teaching: updatedPost.mode_of_teaching,
+          isFreeDemoAvailable: updatedPost.isFreeDemoAvailable,
+          min_salary: updatedPost.min_salary,
+          max_salary: updatedPost.max_salary,
+        })
+        .eq('id', postId)
+        .eq('tutor_id', userId);
+      if (updateError) {
+        console.error('Error updating post:', updateError);
+        setError(updateError.message);
+        setLoading(false);
+        return false;
+      }
+      console.log('Post updated successfully:', data);
+      setLoading(false);
+      ToastAndroid.show('Post updated successfully', ToastAndroid.SHORT);
+      return true;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return false;
+    }
+  };
+
+  return { createPost, updatePost, tutorGetPosts, deletePost, publishUnpublishPost, loading, error };
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   View,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import subjects from '../../data/subjects.json';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -14,8 +13,12 @@ import { TextInput } from 'react-native-gesture-handler';
 import { useTutorPosts } from '../../hooks/useTutorPosts';
 import Components from '../../components/components';
 
-const CreatePost = ({ navigation }: any) => {
-  const { createPost, loading, error } = useTutorPosts();
+const CreatePost = ({ navigation, route }: any) => {
+  const { createPost, updatePost, loading, error } = useTutorPosts();
+
+  const screenMode = route?.params?.mode ?? 'create';
+  const editablePost = route?.params?.post ?? null;
+  const isEditMode = screenMode === 'edit' && !!editablePost;
 
   const [subject, setSubject] = useState('');
   const [subjectline, setSubjectline] = useState('');
@@ -72,6 +75,34 @@ const CreatePost = ({ navigation }: any) => {
     { label: 'No', value: false },
   ];
 
+  const applyEditablePost = useCallback(() => {
+    if (!isEditMode || !editablePost) {
+      return;
+    }
+
+    setSubject(editablePost.subject || '');
+    setSubjectline(editablePost.subject_line_2 || '');
+    setLevel(editablePost.level || '');
+    setBoard(editablePost.board || '');
+    setMode(editablePost.mode_of_teaching || 'Both');
+    setFreeDemoAvailability(!!editablePost.isFreeDemoAvailable);
+    setMinsalary(
+      editablePost.min_salary !== undefined && editablePost.min_salary !== null
+        ? String(editablePost.min_salary)
+        : '',
+    );
+    setMaxsalary(
+      editablePost.max_salary !== undefined && editablePost.max_salary !== null
+        ? String(editablePost.max_salary)
+        : '',
+    );
+    setDescription(editablePost.description || '');
+  }, [editablePost, isEditMode]);
+
+  useEffect(() => {
+    applyEditablePost();
+  }, [applyEditablePost]);
+
   const isFormValid = () => {
     if (
       !subject ||
@@ -96,6 +127,11 @@ const CreatePost = ({ navigation }: any) => {
   };
 
   const handleReset = () => {
+    if (isEditMode) {
+      applyEditablePost();
+      return;
+    }
+
     setSubject('');
     setSubjectline('');
     setLevel('');
@@ -107,7 +143,7 @@ const CreatePost = ({ navigation }: any) => {
     setDescription('');
   };
 
-  const handleCreatePost = async () => {
+  const handleSubmit = async () => {
     if (!isFormValid()) {
       Alert.alert(
         'Validation Error',
@@ -116,7 +152,7 @@ const CreatePost = ({ navigation }: any) => {
       return;
     }
 
-    const success = await createPost({
+    const payload = {
       subject,
       subject_line_2: subjectline,
       level,
@@ -126,11 +162,24 @@ const CreatePost = ({ navigation }: any) => {
       min_salary: parseInt(minsalary),
       max_salary: parseInt(maxsalary),
       description,
-    });
+    };
+
+    let success = false;
+    if (isEditMode) {
+      if (!editablePost?.id) {
+        Alert.alert('Error', 'Unable to update this post.');
+        return;
+      }
+      success = await updatePost(String(editablePost.id), payload);
+    } else {
+      success = await createPost(payload);
+    }
 
     if (success) {
-      ToastAndroid.show('Post created successfully', ToastAndroid.SHORT);
-      handleReset(); // Reset form
+      if (!isEditMode) {
+        ToastAndroid.show('Post created successfully', ToastAndroid.SHORT);
+        handleReset();
+      }
       navigation.goBack();
     } else if (error) {
       Alert.alert('Error', error);
@@ -140,7 +189,9 @@ const CreatePost = ({ navigation }: any) => {
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
       {loading && <Components.LOADING_COMP />}
-      <Text className="text-2xl font-bold my-4">Create a New Post</Text>
+      <Text className="text-2xl font-bold my-4">
+        {isEditMode ? 'Edit Post' : 'Create a New Post'}
+      </Text>
 
       <View className="mb-4 flex-row items-center justify-between">
         {/* Choose subject */}
@@ -367,14 +418,20 @@ const CreatePost = ({ navigation }: any) => {
       </View>
 
       <TouchableOpacity
-        onPress={handleCreatePost}
+        onPress={handleSubmit}
         disabled={!isFormValid() || loading}
         className={`rounded-lg px-4 py-3 w-full mb-4 ${
           !isFormValid() || loading ? 'bg-gray-400' : 'bg-blue-500'
         }`}
       >
         <Text className="text-white text-center font-bold">
-          {loading ? 'Creating...' : 'Create Post'}
+          {loading
+            ? isEditMode
+              ? 'Updating...'
+              : 'Creating...'
+            : isEditMode
+            ? 'Update Post'
+            : 'Create Post'}
         </Text>
       </TouchableOpacity>
 

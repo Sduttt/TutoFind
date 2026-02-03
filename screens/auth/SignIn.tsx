@@ -21,6 +21,8 @@ const SignIn = ({ navigation }: any) => {
 
   const { user } = useUserProfile();
 
+  //TODO : Redirect if already logged in FROM BOTH SIGN IN AND SIGN UP PAGE
+
 
   const { signin, setData, sendPasswordResetMail, data, loading, error } =
     UseAuthStore();
@@ -48,9 +50,6 @@ const SignIn = ({ navigation }: any) => {
       </Text>
 
       <View className="mb-4">
-        {/* <Text className="text-gray-700 font-semibold mb-2 ml-1">
-          Email Address
-        </Text> */}
         <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:bg-white">
           <View className="mr-3">
             <FontAwesomeIcon icon={faEnvelope} size={18} color="#9CA3AF" />
