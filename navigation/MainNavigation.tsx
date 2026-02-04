@@ -32,6 +32,11 @@ const MainNavigation = () => {
         name={Routes.VIEW_POSTS}
         component={Screens.VIEW_POSTS_SCREEN}
       />
+
+      <Stack.Screen
+        name={Routes.STUDENT_HOME}
+        component={Screens.STUDENT_HOME_SCREEN}
+      />
     </Stack.Navigator>
   );
 };

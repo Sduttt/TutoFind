@@ -190,5 +190,47 @@ export const useTutorPosts = () => {
     }
   };
 
-  return { createPost, updatePost, tutorGetPosts, deletePost, publishUnpublishPost, loading, error };
+  const studentGetPosts = async (subject: string, subject_line_2: string, level: string, board: string) => {
+    try {
+      setLoading(true);
+      setError('');
+      let query = supabase
+        .from('posts')
+        .select('*')
+        .eq('isLive', true);
+
+      if (subject) {
+        query = query.eq('subject', subject);
+      }
+
+      if (subject_line_2) {
+        query = query.eq('subject_line_2', subject_line_2);
+      }
+
+      if (level) {
+        query = query.eq('level', level);
+      }
+
+      if (board) {
+        query = query.eq('board', board);
+      }
+
+      const { data, error: fetchError } = await query;
+      if (fetchError) {
+        console.error('Error fetching posts:', fetchError);
+        setError(fetchError.message);
+        setLoading(false);
+        return [];
+      }
+      console.log('Posts fetched successfully:', data);
+      setLoading(false);
+      return data;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return [];
+    }
+  };
+  return { createPost, updatePost, tutorGetPosts, deletePost, publishUnpublishPost, studentGetPosts, loading, error };
 };

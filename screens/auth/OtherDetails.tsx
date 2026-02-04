@@ -82,7 +82,6 @@ const OtherDetails = () => {
     setData('native_language', nativeLang);
     setData('other_languages', otherLanguages);
     setData('bio', bio);
-    // Merge address with city and pincode (convert pincode to number if needed)
     setData('address', {
       latitude: data.address?.latitude || null,
       longitude: data.address?.longitude || null,
@@ -95,6 +94,9 @@ const OtherDetails = () => {
     if (success) {
       if (user_type === 'tutor') {
         navigation.navigate(Routes.TUTOR_DASHBOARD);
+      }
+      else {
+        navigation.navigate(Routes.STUDENT_HOME);
       }
     }
   };

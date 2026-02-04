@@ -6,4 +6,5 @@ export const Routes = {
   ADD_USER_DETAILS: 'OtherDetails',
   CREATE_POST: 'CreatePost',
   VIEW_POSTS: 'ViewPosts',
+  STUDENT_HOME: 'StudentHome',
 };
