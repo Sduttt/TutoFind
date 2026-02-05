@@ -15,7 +15,7 @@ import {
 import { UseAuthStore } from '../../store/AuthStore';
 import { Routes } from '../../navigation/routes';
 
-const TutorDashboard = ({ navigation }: { navigation: any }) => {
+const UserDashboard = ({ navigation }: { navigation: any }) => {
   const { user, loading, error } = useUserProfile();
   const { signout } = UseAuthStore();
 
@@ -34,7 +34,6 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
         .join(', ')
     : '';
 
-  // Parse address if it's a string
   const address =
     typeof user?.address === 'string'
       ? JSON.parse(user.address)
@@ -48,7 +47,7 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
         <Components.ERROR_COMP error={error} />
       ) : (
         <>
-          <Components.TUTOR_DASHBOARD_HEADER />
+          <Components.USER_DASHBOARD_HEADER />
           {/* Bio Section */}
           <View className="mt-4 mx-4">
             <Text className="text-lg font-bold">Bio</Text>
@@ -113,21 +112,36 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
 
           <View className="mx-4 mt-6 mb-20">
             {/* Posts sSection */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate(Routes.CREATE_POST)}
-              className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
-            >
-              <Text className="text-white font-bold text-lg">CREATE POST</Text>
-            </TouchableOpacity>
+            {user?.user_type === 'tutor' ? (
+              <>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate(Routes.CREATE_POST)}
+                  className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+                >
+                  <Text className="text-white font-bold text-lg">
+                    CREATE POST
+                  </Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate(Routes.VIEW_POSTS)}
-              className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
-            >
-              <Text className="text-white text-center w-full font-bold text-lg">
-                VIEW POST
-              </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate(Routes.VIEW_POSTS)}
+                  className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+                >
+                  <Text className="text-white text-center w-full font-bold text-lg">
+                    VIEW POST
+                  </Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                onPress={() => navigation.navigate(Routes.STUDENT_HOME)}
+                className="bg-blue-600 rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mb-8"
+              >
+                <Text className="text-white text-center w-full font-bold text-lg">
+                  VIEW POST
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               onPress={() => {
@@ -150,4 +164,4 @@ const TutorDashboard = ({ navigation }: { navigation: any }) => {
   );
 };
 
-export default TutorDashboard;
+export default UserDashboard;

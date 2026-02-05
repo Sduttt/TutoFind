@@ -32,10 +32,11 @@ const SignIn = ({ navigation }: any) => {
       if (userType === 'tutor') {
         navigation.navigate(Routes.TUTOR_DASHBOARD);
       } else {
-        navigation.navigate(Routes.STUDENT_HOME);
+        navigation.navigate(Routes.STUDENT_DRAWER);
       }
     } else {
-      Alert.alert(`Sign In Failed: ${error}`);
+      const storeError = UseAuthStore.getState().error;
+      Alert.alert('Sign In Failed', storeError || 'Invalid credentials');
     }
   };
 

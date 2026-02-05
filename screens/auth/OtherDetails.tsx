@@ -26,8 +26,7 @@ const OtherDetails = () => {
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other' | ''>('');
   const [nativeLang, setNativeLang] = useState('');
   const [bio, setBio] = useState('');
-  const { prevStep, setData, updateProfile, data, loading } =
-    UseAuthStore();
+  const { prevStep, setData, updateProfile, data, loading } = UseAuthStore();
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
 
@@ -94,9 +93,8 @@ const OtherDetails = () => {
     if (success) {
       if (user_type === 'tutor') {
         navigation.navigate(Routes.TUTOR_DASHBOARD);
-      }
-      else {
-        navigation.navigate(Routes.STUDENT_HOME);
+      } else {
+        navigation.navigate(Routes.STUDENT_DRAWER);
       }
     }
   };

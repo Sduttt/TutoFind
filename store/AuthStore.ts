@@ -5,7 +5,6 @@ import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import { Alert } from 'react-native';
 
-
 declare global {
   const atob: (input: string) => string;
 }
@@ -196,6 +195,7 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
 
       if (authError) {
         console.log(authError);
+        set({ loading: false, error: `Signin Error: ${authError.message}` });
         throw authError;
       } else {
         console.log('Signin successful:', authData);
@@ -216,18 +216,17 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
   },
 
   signout: async () => {
-    try{
+    try {
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.log('Signout Error:', error);
         throw error;
       }
-      console.log("Signout Successful");
+      console.log('Signout Successful');
     } catch (error: any) {
       console.log('Signout Error:', error);
     }
   },
-
 
   updateProfile: async () => {
     const { data } = get();

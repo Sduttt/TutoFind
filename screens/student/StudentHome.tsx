@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import subjects from '../../data/subjects.json';
 import { useTutorPosts } from '../../hooks/useTutorPosts';
 import Components from '../../components/components';
 import { getUserProfile } from '../../services/userService';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { Drawer } from 'react-native-drawer-layout';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 const StudentHome = () => {
   const { studentGetPosts, loading, error } = useTutorPosts();
-  // const user = getUserProfile();
+  const navigation = useNavigation();
 
   const [subject, setSubject] = useState('');
   const [subjectline, setSubjectline] = useState('');
@@ -118,7 +123,14 @@ const StudentHome = () => {
 
   return (
     <SafeAreaView className="flex-1 p-4">
-      <Text className="font-bold text-xl mb-2">Filter to search posts</Text>
+      <View className="my-4 flex-row justify-between items-center">
+        <Text className="text-3xl font-bold text-center">Find Your Tutor</Text>
+        <TouchableOpacity
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+        >
+          <FontAwesomeIcon icon={faBars} size={24} />
+        </TouchableOpacity>
+      </View>
       <View className="flex-row justify-between items-center">
         <DropDownPicker
           open={openSubject}

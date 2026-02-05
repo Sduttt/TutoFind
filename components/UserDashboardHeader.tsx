@@ -2,9 +2,9 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faUser } from '@fortawesome/free-solid-svg-icons';
 
-const TutorDashboardHeader = () => {
+const UserDashboardHeader = () => {
   const { user } = useUserProfile();
 
   return (
@@ -13,11 +13,15 @@ const TutorDashboardHeader = () => {
       <View className="flex-row items-start">
         <View className="border-2 border-blue-500 rounded-full w-32 h-32 flex items-center justify-center">
           <View className="h-28 w-28 bg-gray-100 rounded-full overflow-hidden items-center justify-center">
-            <Image
-              source={{ uri: user?.avatar_url }}
-              className="h-full w-full"
-              resizeMode="cover"
-            />
+            {user?.avatar_url ? (
+              <Image
+                source={{ uri: user?.avatar_url }}
+                className="h-full w-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faUser} size={60} color="gray" />
+            )}
           </View>
         </View>
         <View className="ml-4 mt-2 w-56">
@@ -47,4 +51,4 @@ const TutorDashboardHeader = () => {
   );
 };
 
-export default TutorDashboardHeader;
+export default UserDashboardHeader;
