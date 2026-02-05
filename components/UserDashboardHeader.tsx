@@ -4,8 +4,9 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment, faUser } from '@fortawesome/free-solid-svg-icons';
 
-const UserDashboardHeader = () => {
-  const { user } = useUserProfile();
+const UserDashboardHeader = ({ user: passedUser }: { user?: any }) => {
+  const { user: hookUser } = useUserProfile();
+  const user = passedUser || hookUser;
 
   return (
     <View className="flex-row justify-between items-start p-4">
@@ -33,7 +34,7 @@ const UserDashboardHeader = () => {
             <Text
               className={`text-sm font-bold text-white mx-2 text-center w-[130px] rounded-full h-[30px] leading-[30px] items-center justify-center ${user?.subscription_type === 'free' ? 'bg-gray-500' : user?.subscription_type === 'silver' ? 'bg-blue-500' : 'bg-yellow-500'} `}
             >
-              {user?.subscription_type.toUpperCase()} USER
+              {user?.subscription_type?.toUpperCase()} USER
             </Text>
           </TouchableOpacity>
         </View>

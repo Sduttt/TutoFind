@@ -144,7 +144,7 @@ export const useTutorPosts = () => {
       setLoading(false);
       return false;
     }
-  }
+  };
 
   const updatePost = async (postId: string, updatedPost: Post) => {
     try {
@@ -190,14 +190,16 @@ export const useTutorPosts = () => {
     }
   };
 
-  const studentGetPosts = async (subject: string, subject_line_2: string, level: string, board: string) => {
+  const studentGetPosts = async (
+    subject: string,
+    subject_line_2: string,
+    level: string,
+    board: string,
+  ) => {
     try {
       setLoading(true);
       setError('');
-      let query = supabase
-        .from('posts')
-        .select('*')
-        .eq('isLive', true);
+      let query = supabase.from('posts').select('*').eq('isLive', true);
 
       if (subject) {
         query = query.eq('subject', subject);
@@ -232,5 +234,38 @@ export const useTutorPosts = () => {
       return [];
     }
   };
-  return { createPost, updatePost, tutorGetPosts, deletePost, publishUnpublishPost, studentGetPosts, loading, error };
+  const incrementViewCount = async (postId: string) => {
+    try {
+      if (!userId) return false;
+
+      const { data, error: rpcError } = await supabase.rpc(
+        'increment_post_view',
+        {
+          p_post_id: postId,
+          p_viewer_id: userId,
+        },
+      );
+
+      if (rpcError) {
+        console.error('Error incrementing view count:', rpcError);
+        return false;
+      }
+      return data; // Returns true if it was a new view
+    } catch (err) {
+      console.error('Unexpected error incrementing view count:', err);
+      return false;
+    }
+  };
+
+  return {
+    createPost,
+    updatePost,
+    tutorGetPosts,
+    deletePost,
+    publishUnpublishPost,
+    studentGetPosts,
+    incrementViewCount,
+    loading,
+    error,
+  };
 };

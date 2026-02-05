@@ -8,4 +8,5 @@ export const Routes = {
   VIEW_POSTS: 'ViewPosts',
   STUDENT_HOME: 'StudentHome',
   STUDENT_DRAWER: 'StudentDrawer',
+  TUTOR_PROFILE: 'TutorProfile',
 };

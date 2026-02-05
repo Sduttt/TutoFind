@@ -57,6 +57,10 @@ const MainNavigation = () => {
         name={Routes.STUDENT_HOME}
         component={Screens.STUDENT_HOME_SCREEN}
       />
+      <Stack.Screen
+        name={Routes.TUTOR_PROFILE}
+        component={Screens.TUTOR_PROFILE_SCREEN}
+      />
       <Stack.Screen name={Routes.STUDENT_DRAWER} component={DrawerNavigation} />
     </Stack.Navigator>
   );
