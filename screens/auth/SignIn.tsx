@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { UseAuthStore } from '../../store/AuthStore';
@@ -21,26 +21,24 @@ const SignIn = ({ navigation }: any) => {
 
   const { user } = useUserProfile();
 
-  //TODO : Redirect if already logged in FROM BOTH SIGN IN AND SIGN UP PAGE
-
-
   const { signin, setData, sendPasswordResetMail, data, loading, error } =
     UseAuthStore();
 
-    const handleSignIn = async () => {
-      if (loading) return;
-      const success = await signin();
-      if (success) {
-        const userType = UseAuthStore.getState().data.user_type;
-        if (userType === 'tutor') {
-          navigation.navigate(Routes.TUTOR_DASHBOARD);
-        } else {
-         //TODO: Navigate to student dashboard
-        }
+  const handleSignIn = async () => {
+    if (loading) return;
+    const success = await signin();
+    if (success) {
+      const userType = UseAuthStore.getState().data.user_type;
+      if (userType === 'tutor') {
+        navigation.navigate(Routes.TUTOR_DASHBOARD);
       } else {
-        Alert.alert(`Sign In Failed: ${error}`);
+        navigation.navigate(Routes.STUDENT_DRAWER);
       }
+    } else {
+      const storeError = UseAuthStore.getState().error;
+      Alert.alert('Sign In Failed', storeError || 'Invalid credentials');
     }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6 mt-0 align-center justify-center">
@@ -128,32 +126,29 @@ const SignIn = ({ navigation }: any) => {
         <View className="mb-4">
           <TouchableOpacity
             onPress={handleSignIn}
-          className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
+            className="bg-button rounded-xl py-4 items-center shadow-lg active:bg-blue-700 mt-6"
           >
-          <Text className="text-white font-bold text-lg">Sign In</Text>
-        </TouchableOpacity>
+            <Text className="text-white font-bold text-lg">Sign In</Text>
+          </TouchableOpacity>
         </View>
-  )
-}
+      )}
 
-{
-  forgotPassword ? (
-    <View className="flex-row justify-center mt-2">
-      <Text>Or </Text>
-      <TouchableOpacity onPress={() => setForgotPassword(false)}>
-        <Text className="text-blue-600 font-bold">Sign In</Text>
-      </TouchableOpacity>
-    </View>
-  ) : (
-    <View className="flex-row justify-center mt-2">
-      <Text>New User? </Text>
-      <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNUP)}>
-        <Text className="text-blue-600 font-bold">Sign Up</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-    </SafeAreaView >
+      {forgotPassword ? (
+        <View className="flex-row justify-center mt-2">
+          <Text>Or </Text>
+          <TouchableOpacity onPress={() => setForgotPassword(false)}>
+            <Text className="text-blue-600 font-bold">Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View className="flex-row justify-center mt-2">
+          <Text>New User? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate(Routes.SIGNUP)}>
+            <Text className="text-blue-600 font-bold">Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 

@@ -19,15 +19,13 @@ import Components from '../../components/components';
 
 import { Routes } from '../../navigation/routes';
 import { useNavigation } from '@react-navigation/native';
-import { useUserProfile } from '../../hooks/useUserProfile';
 
 const OtherDetails = () => {
   const navigation = useNavigation<any>();
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other' | ''>('');
   const [nativeLang, setNativeLang] = useState('');
   const [bio, setBio] = useState('');
-  const { prevStep, setData, updateProfile, data, loading } =
-    UseAuthStore();
+  const { prevStep, setData, updateProfile, data, loading } = UseAuthStore();
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
 
@@ -50,7 +48,6 @@ const OtherDetails = () => {
   const [otherLangItems, setOtherLangItems] = useState(
     languages.map(lang => ({ label: lang.nativeName, value: lang.code })),
   );
-  const [resumeName, setResumeName] = useState('');
 
   const GetLocation = () => {
     Geolocation.requestAuthorization(
@@ -82,7 +79,6 @@ const OtherDetails = () => {
     setData('native_language', nativeLang);
     setData('other_languages', otherLanguages);
     setData('bio', bio);
-    // Merge address with city and pincode (convert pincode to number if needed)
     setData('address', {
       latitude: data.address?.latitude || null,
       longitude: data.address?.longitude || null,
@@ -95,6 +91,8 @@ const OtherDetails = () => {
     if (success) {
       if (user_type === 'tutor') {
         navigation.navigate(Routes.TUTOR_DASHBOARD);
+      } else {
+        navigation.navigate(Routes.STUDENT_DRAWER);
       }
     }
   };

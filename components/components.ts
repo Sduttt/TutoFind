@@ -1,13 +1,15 @@
 import ErrorModal from './ErrorModal';
 import Loading from './Loading';
 import PostCard from './PostCard';
-import TutorDashboardHeader from './TutorDashboardHeader';
+import UserDashboardHeader from './UserDashboardHeader';
+import Profile from './Profile';
 
 const Components = {
   LOADING_COMP: Loading,
-  TUTOR_DASHBOARD_HEADER: TutorDashboardHeader,
+  USER_DASHBOARD_HEADER: UserDashboardHeader,
   ERROR_COMP: ErrorModal,
   POST_CARD: PostCard,
+  PROFILE: Profile,
 };
 
 export default Components;

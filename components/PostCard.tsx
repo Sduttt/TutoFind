@@ -1,9 +1,12 @@
 import { Text, Image, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { PostType } from '../types/Type';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useTutorPosts } from '../hooks/useTutorPosts';
+import { useNavigation } from '@react-navigation/native';
+import { Routes } from '../navigation/routes';
 
 const PostCard = ({
   subject,
@@ -26,7 +29,32 @@ const PostCard = ({
   onEdit,
 }: PostType) => {
   const { user } = useUserProfile();
-  const { deletePost, publishUnpublishPost, loading, error } = useTutorPosts();
+  const {
+    deletePost,
+    publishUnpublishPost,
+    incrementViewCount,
+    loading,
+    error,
+  } = useTutorPosts();
+  const navigation = useNavigation<any>();
+
+  const [displayViews, setDisplayViews] = useState(totalViews);
+
+  useEffect(() => {
+    setDisplayViews(totalViews);
+  }, [totalViews]);
+
+  useEffect(() => {
+    const recordView = async () => {
+      if (user && user.id !== tutorId && user.user_type === 'student') {
+        const isNewView = await incrementViewCount(postId);
+        if (isNewView) {
+          setDisplayViews((prev: any) => (Number(prev) || 0) + 1);
+        }
+      }
+    };
+    recordView();
+  }, [postId, user?.id, tutorId]);
 
   const handleDelete = async () => {
     const success = await deletePost(postId);
@@ -38,25 +66,23 @@ const PostCard = ({
   return (
     <View className="mb-4">
       <View className="bg-gray-200 p-3 mt-2 rounded-lg shadow-md flex-row justify-between relative">
-        {
-          user && user.id === tutorId ? (
-            <TouchableOpacity
-              onPress={async () => {
-                const success = await publishUnpublishPost(postId, !isLive);
-                if (success && onDelete) {
-                  onDelete();
-                }
-              }}
-              className={`absolute top-0 right-0 px-2 py-1 rounded-lg rounded-tl-none ${
-                isLive ? 'bg-red-500' : 'bg-green-500'
-              }`}
-            >
-              <Text className="text-white text-xs font-bold">
-                {isLive ? 'Unpublish' : 'Publish'}
-              </Text>
-            </TouchableOpacity>
-          ) : null
-        }
+        {user && user.id === tutorId ? (
+          <TouchableOpacity
+            onPress={async () => {
+              const success = await publishUnpublishPost(postId, !isLive);
+              if (success && onDelete) {
+                onDelete();
+              }
+            }}
+            className={`absolute top-0 right-0 px-2 py-1 rounded-lg rounded-tl-none ${
+              isLive ? 'bg-red-500' : 'bg-green-500'
+            }`}
+          >
+            <Text className="text-white text-xs font-bold">
+              {isLive ? 'Unpublish' : 'Publish'}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         <View className="bg-white p-4 rounded-lg w-[72%] flex-col justify-between">
           <View className="flex-row justify-between items-start mb-2">
             <View>
@@ -81,14 +107,21 @@ const PostCard = ({
 
             <View className="flex-row items-center w-12 justify-between bg-gray-300 px-2 rounded-full">
               <FontAwesomeIcon icon={faEye} size={12} color={'black'} />
-              <Text className="text-sm text-black">{totalViews}</Text>
+              <Text className="text-sm text-black">{displayViews}</Text>
             </View>
           </View>
         </View>
         <View className="flex-col justify-between mt-4">
           <View>
             <View className="flex-col justify-between items-center mt-2">
-              <View className="h-12 w-12 bg-gray-100 rounded-full overflow-hidden items-center justify-center">
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(Routes.TUTOR_PROFILE as String, {
+                    userId: tutorId as string,
+                  })
+                }
+                className="h-12 w-12 bg-gray-100 rounded-full overflow-hidden items-center justify-center"
+              >
                 <Image
                   source={
                     typeof tutorImg === 'string' ? { uri: tutorImg } : tutorImg
@@ -96,7 +129,7 @@ const PostCard = ({
                   className="h-full w-full"
                   resizeMode="cover"
                 />
-              </View>
+              </TouchableOpacity>
               <Text className="font-bold text-sm mt-2">{tutorName}</Text>
             </View>
           </View>

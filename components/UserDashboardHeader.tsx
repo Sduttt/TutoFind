@@ -2,10 +2,11 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faUser } from '@fortawesome/free-solid-svg-icons';
 
-const TutorDashboardHeader = () => {
-  const { user } = useUserProfile();
+const UserDashboardHeader = ({ user: passedUser }: { user?: any }) => {
+  const { user: hookUser } = useUserProfile();
+  const user = passedUser || hookUser;
 
   return (
     <View className="flex-row justify-between items-start p-4">
@@ -13,11 +14,15 @@ const TutorDashboardHeader = () => {
       <View className="flex-row items-start">
         <View className="border-2 border-blue-500 rounded-full w-32 h-32 flex items-center justify-center">
           <View className="h-28 w-28 bg-gray-100 rounded-full overflow-hidden items-center justify-center">
-            <Image
-              source={{ uri: user?.avatar_url }}
-              className="h-full w-full"
-              resizeMode="cover"
-            />
+            {user?.avatar_url ? (
+              <Image
+                source={{ uri: user?.avatar_url }}
+                className="h-full w-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faUser} size={60} color="gray" />
+            )}
           </View>
         </View>
         <View className="ml-4 mt-2 w-56">
@@ -29,7 +34,7 @@ const TutorDashboardHeader = () => {
             <Text
               className={`text-sm font-bold text-white mx-2 text-center w-[130px] rounded-full h-[30px] leading-[30px] items-center justify-center ${user?.subscription_type === 'free' ? 'bg-gray-500' : user?.subscription_type === 'silver' ? 'bg-blue-500' : 'bg-yellow-500'} `}
             >
-              {user?.subscription_type.toUpperCase()} USER
+              {user?.subscription_type?.toUpperCase()} USER
             </Text>
           </TouchableOpacity>
         </View>
@@ -47,4 +52,4 @@ const TutorDashboardHeader = () => {
   );
 };
 
-export default TutorDashboardHeader;
+export default UserDashboardHeader;

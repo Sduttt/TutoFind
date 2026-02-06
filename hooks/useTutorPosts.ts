@@ -144,7 +144,7 @@ export const useTutorPosts = () => {
       setLoading(false);
       return false;
     }
-  }
+  };
 
   const updatePost = async (postId: string, updatedPost: Post) => {
     try {
@@ -190,5 +190,82 @@ export const useTutorPosts = () => {
     }
   };
 
-  return { createPost, updatePost, tutorGetPosts, deletePost, publishUnpublishPost, loading, error };
+  const studentGetPosts = async (
+    subject: string,
+    subject_line_2: string,
+    level: string,
+    board: string,
+  ) => {
+    try {
+      setLoading(true);
+      setError('');
+      let query = supabase.from('posts').select('*').eq('isLive', true);
+
+      if (subject) {
+        query = query.eq('subject', subject);
+      }
+
+      if (subject_line_2) {
+        query = query.eq('subject_line_2', subject_line_2);
+      }
+
+      if (level) {
+        query = query.eq('level', level);
+      }
+
+      if (board) {
+        query = query.eq('board', board);
+      }
+
+      const { data, error: fetchError } = await query;
+      if (fetchError) {
+        console.error('Error fetching posts:', fetchError);
+        setError(fetchError.message);
+        setLoading(false);
+        return [];
+      }
+      console.log('Posts fetched successfully:', data);
+      setLoading(false);
+      return data;
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+      setLoading(false);
+      return [];
+    }
+  };
+  const incrementViewCount = async (postId: string) => {
+    try {
+      if (!userId) return false;
+
+      const { data, error: rpcError } = await supabase.rpc(
+        'increment_post_view',
+        {
+          p_post_id: postId,
+          p_viewer_id: userId,
+        },
+      );
+
+      if (rpcError) {
+        console.error('Error incrementing view count:', rpcError);
+        return false;
+      }
+      return data; // Returns true if it was a new view
+    } catch (err) {
+      console.error('Unexpected error incrementing view count:', err);
+      return false;
+    }
+  };
+
+  return {
+    createPost,
+    updatePost,
+    tutorGetPosts,
+    deletePost,
+    publishUnpublishPost,
+    studentGetPosts,
+    incrementViewCount,
+    loading,
+    error,
+  };
 };
