@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
@@ -13,6 +13,8 @@ import Components from './components';
 import languages from '../data/languages.json';
 import { UseAuthStore } from '../store/AuthStore';
 import { Routes } from '../navigation/routes';
+import { getDistance } from 'geolib';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({
   navigation,
@@ -24,7 +26,14 @@ const Profile = ({
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signout, userId: id } = UseAuthStore();
+  const [distance, setDistance] = useState<number | null>(null);
+  const {
+    signout,
+    userId: loggedInId,
+    data: { address: loggedInAddress },
+  } = UseAuthStore();
+  const curUserLat = loggedInAddress?.latitude;
+  const curUserLong = loggedInAddress?.longitude;
 
   const fetchProfile = async () => {
     if (!userId) return;
@@ -38,9 +47,30 @@ const Profile = ({
     setLoading(false);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [userId]),
+  );
+
   useEffect(() => {
-    fetchProfile();
-  }, [userId]);
+    if (userProfile?.address && curUserLat != null && curUserLong != null) {
+      const address =
+        typeof userProfile.address === 'string'
+          ? JSON.parse(userProfile.address)
+          : userProfile.address;
+      if (address.latitude != null && address.longitude != null) {
+        const dist = getDistance(
+          { latitude: Number(curUserLat), longitude: Number(curUserLong) },
+          {
+            latitude: Number(address.latitude),
+            longitude: Number(address.longitude),
+          },
+        );
+        setDistance(dist);
+      }
+    }
+  }, [userId, userProfile?.address, curUserLat, curUserLong]);
 
   const getLanguageName = (code: string) => {
     const lang = languages.find(l => l.code === code);
@@ -129,8 +159,29 @@ const Profile = ({
           </View>
         </View>
       </View>
+      {/* Distance */}
+      {loggedInId !== userId && (
+        <View className="mx-4 mt-6 mb-20">
+          <View className="flex-row items-center">
+            <FontAwesomeIcon icon={faLocationPin} size={18} color="#2563eb" />
+            <Text className="ml-2 text-blue-800 font-semibold">
+              Distace from you
+            </Text>
+          </View>
+          <Text className="mt-1 text-2xl font-bold text-blue-900">
+            {distance
+              ? distance > 1000
+                ? `${(distance / 1000).toFixed(1)} km`
+                : `${distance} meters`
+              : 'Not available'}
+          </Text>
+          <Text className="text-blue-600 text-xs mt-1">
+            Based on provided addresses
+          </Text>
+        </View>
+      )}
       {/* Buttons Section */}
-      {id === userId && (
+      {loggedInId === userId && (
         <>
           <View className="mx-4 mt-6 mb-20">
             {/* Posts Section */}
@@ -176,9 +227,12 @@ const Profile = ({
             </TouchableOpacity>
           </View>
 
-          <View className="absolute bottom-4 right-4 items-center justify-center h-16 w-16 bg-blue-500 rounded-full p-2">
+          <TouchableOpacity
+            onPress={() => navigation.navigate(Routes.UPDATE_USER_DETAILS)}
+            className="absolute bottom-4 right-4 items-center justify-center h-16 w-16 bg-blue-500 rounded-full p-2"
+          >
             <FontAwesomeIcon icon={faPen} size={20} color="white" />
-          </View>
+          </TouchableOpacity>
         </>
       )}
     </View>

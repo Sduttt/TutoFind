@@ -326,7 +326,6 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       const buffer = Buffer.from(base64, 'base64');
       const filePath = fileName;
 
-      // Check for ANY existing avatar for this user (avatar-{userId}.*) to prevent duplicates
       const { data: listData } = await supabase.storage
         .from('avatars')
         .list('', { search: `avatar-${userId}.` });

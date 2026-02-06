@@ -9,4 +9,5 @@ export const Routes = {
   STUDENT_HOME: 'StudentHome',
   STUDENT_DRAWER: 'StudentDrawer',
   TUTOR_PROFILE: 'TutorProfile',
+  UPDATE_USER_DETAILS: 'UpdateUserDetails',
 };

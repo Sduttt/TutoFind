@@ -61,6 +61,10 @@ const MainNavigation = () => {
         name={Routes.TUTOR_PROFILE}
         component={Screens.TUTOR_PROFILE_SCREEN}
       />
+      <Stack.Screen
+        name={Routes.UPDATE_USER_DETAILS}
+        component={Screens.UPDATE_USER_DETAILS_SCREEN}
+      />
       <Stack.Screen name={Routes.STUDENT_DRAWER} component={DrawerNavigation} />
     </Stack.Navigator>
   );

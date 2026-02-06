@@ -19,7 +19,6 @@ import Components from '../../components/components';
 
 import { Routes } from '../../navigation/routes';
 import { useNavigation } from '@react-navigation/native';
-import { useUserProfile } from '../../hooks/useUserProfile';
 
 const OtherDetails = () => {
   const navigation = useNavigation<any>();
@@ -49,7 +48,6 @@ const OtherDetails = () => {
   const [otherLangItems, setOtherLangItems] = useState(
     languages.map(lang => ({ label: lang.nativeName, value: lang.code })),
   );
-  const [resumeName, setResumeName] = useState('');
 
   const GetLocation = () => {
     Geolocation.requestAuthorization(

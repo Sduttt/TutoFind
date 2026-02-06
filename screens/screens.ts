@@ -7,6 +7,7 @@ import CreatePost from './tutor/CreatePost';
 import ViewPosts from './tutor/ViewPosts';
 import StudentHome from './student/StudentHome';
 import TutorProfile from './common/TutorProfile';
+import UpdateUserDetails from './common/UpdateUserDetails';
 
 const Screens = {
   SIGNUP_SCREEN: SignupStack,
@@ -18,6 +19,7 @@ const Screens = {
   VIEW_POSTS_SCREEN: ViewPosts,
   STUDENT_HOME_SCREEN: StudentHome,
   TUTOR_PROFILE_SCREEN: TutorProfile,
+  UPDATE_USER_DETAILS_SCREEN: UpdateUserDetails,
 };
 
 export default Screens;

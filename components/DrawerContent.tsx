@@ -34,7 +34,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
         paddingLeft: 0,
       }}
     >
-      <View className="bg-blue-500 items-center p-5 pt-6 w-[120%] ml-[-20px] rounded-tl-2xl ">
+      <View className="bg-blue-500 items-center p-5 pt-12 w-[120%] ml-[-20px] rounded-tl-2xl ">
         <View className="bg-white rounded-full p-0.5 mb-3 shadow-lg elevation-5">
           {user?.avatar_url ? (
             <Image
@@ -62,7 +62,7 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           onPress={() => props.navigation.navigate(Routes.TUTOR_DASHBOARD)}
         >
           <FontAwesomeIcon icon={faUser} size={20} color="#374151" />
-          <Text className="ml-4 text-[#374151] font-semibold text-base">
+          <Text className="ml-4 text-gray-600 font-semibold w-full text-base">
             View Profile
           </Text>
         </TouchableOpacity>
