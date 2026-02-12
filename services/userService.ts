@@ -37,34 +37,35 @@ export const updateUserProfile = async (userId: string, updates: any) => {
   }
 };
 
-export const uploadAvatar = async (userId: string, filePath: string) => {
-  try {
-    const fileExt = filePath.split('.').pop();
-    const fileName = `${userId}${Math.random()}.${fileExt}`;
-    const path = `avatars/${fileName}`;
+//TODO: remove if not using
+// export const uploadAvatar = async (userId: string, filePath: string) => {
+//   try {
+//     const fileExt = filePath.split('.').pop();
+//     const fileName = `${userId}${Math.random()}.${fileExt}`;
+//     const path = `avatars/${fileName}`;
 
-    const formData = new FormData();
-    formData.append('file', {
-      uri: filePath,
-      name: fileName,
-      type: `image/${fileExt}`,
-    } as any);
+//     const formData = new FormData();
+//     formData.append('file', {
+//       uri: filePath,
+//       name: fileName,
+//       type: `image/${fileExt}`,
+//     } as any);
 
-    const { data, error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(path, formData);
+//     const { data, error: uploadError } = await supabase.storage
+//       .from('avatars')
+//       .upload(path, formData);
 
-    if (uploadError) {
-      throw uploadError;
-    }
+//     if (uploadError) {
+//       throw uploadError;
+//     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(path);
+//     const { data: publicUrlData } = supabase.storage
+//       .from('avatars')
+//       .getPublicUrl(path);
 
-    return { data: publicUrlData.publicUrl, error: null };
-  } catch (error: any) {
-    console.log('Error uploading avatar:', error);
-    return { data: null, error: error.message };
-  }
-};
+//     return { data: publicUrlData.publicUrl, error: null };
+//   } catch (error: any) {
+//     console.log('Error uploading avatar:', error);
+//     return { data: null, error: error.message };
+//   }
+// };

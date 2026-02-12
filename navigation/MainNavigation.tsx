@@ -65,6 +65,11 @@ const MainNavigation = () => {
         name={Routes.UPDATE_USER_DETAILS}
         component={Screens.UPDATE_USER_DETAILS_SCREEN}
       />
+      <Stack.Screen name={Routes.CHAT_SCREEN} component={Screens.CHAT_SCREEN} />
+      <Stack.Screen
+        name={Routes.CHAT_LIST_SCREEN}
+        component={Screens.CHAT_LIST_SCREEN}
+      />
       <Stack.Screen name={Routes.STUDENT_DRAWER} component={DrawerNavigation} />
     </Stack.Navigator>
   );

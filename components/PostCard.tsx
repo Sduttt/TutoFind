@@ -7,6 +7,8 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { useTutorPosts } from '../hooks/useTutorPosts';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../navigation/routes';
+import { supabase } from '../lib/supabase';
+import { sendMessage } from '../services/chatService';
 
 const PostCard = ({
   subject,
@@ -63,6 +65,90 @@ const PostCard = ({
     }
   };
 
+  const handleContact = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'Please wait until your profile is loaded.');
+      return;
+    }
+
+    try {
+      console.log(
+        'Fetching conversation for tutor:',
+        tutorId,
+        'and student:',
+        user.id,
+      );
+      const { data, error: fetchError } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('tutor_id', tutorId)
+        .eq('student_id', user.id)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Error fetching conversation:', fetchError);
+        Alert.alert(
+          'Error',
+          'Failed to fetch conversation: ' + fetchError.message,
+        );
+        return;
+      }
+
+      const sendFirstMsg = async (chatData: any) => {
+        const { error: msgError } = await sendMessage(
+          chatData.id,
+          user.id,
+          tutorId,
+          `I am interested in this class: **${subject}**, **${subjectLine}**.`,
+        );
+        if (msgError) {
+          console.error('Error sending first message:', msgError);
+        }
+        navigation.navigate(Routes.CHAT_SCREEN as String, {
+          tutorId,
+          postId,
+          conversationId: chatData.id,
+        });
+      };
+
+      if (data) {
+        console.log('Existing conversation found:', data.id);
+        sendFirstMsg(data);
+      } else {
+        console.log('No existing conversation, creating new one...');
+        const initialMessage = `I am interested in this class: **${subject}**, **${subjectLine}**.`;
+        const { data: newData, error: insertError } = await supabase
+          .from('conversations')
+          .insert({
+            tutor_id: tutorId,
+            student_id: user.id,
+            last_msg: initialMessage,
+          })
+          .select()
+          .maybeSingle();
+
+        if (insertError) {
+          console.error('Error creating conversation:', insertError);
+          Alert.alert(
+            'Error',
+            'Failed to create conversation: ' + insertError.message,
+          );
+          return;
+        }
+
+        if (newData) {
+          console.log('New conversation created:', newData.id);
+          sendFirstMsg(newData);
+        } else {
+          console.error('Insert returned no data');
+        }
+      }
+    } catch (err: any) {
+      console.error('handleContact exception:', err);
+      Alert.alert('Error', 'An unexpected error occurred.');
+    }
+  };
+
   return (
     <View className="mb-4">
       <View className="bg-gray-200 p-3 mt-2 rounded-lg shadow-md flex-row justify-between relative">
@@ -87,7 +173,7 @@ const PostCard = ({
           <View className="flex-row justify-between items-start mb-2">
             <View>
               <Text className="font-bold text-lg">{subject}</Text>
-              <Text className="text-gray-700">{subjectLine}</Text>
+              <Text className="text-gray-700 font-bold">{subjectLine}</Text>
             </View>
             <View>
               <Text className="text-sm text-gray-500">{level}</Text>
@@ -131,6 +217,15 @@ const PostCard = ({
                 />
               </TouchableOpacity>
               <Text className="font-bold text-sm mt-2">{tutorName}</Text>
+
+              <TouchableOpacity
+                onPress={handleContact}
+                className="mt-2 bg-blue-600 rounded-xl px-2 py-1"
+              >
+                <Text className="text-white text-sm font-bold">
+                  Contact Tutor
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View>
