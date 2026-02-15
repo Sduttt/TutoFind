@@ -90,9 +90,9 @@ const OtherDetails = () => {
     const success = await updateProfile();
     if (success) {
       if (user_type === 'tutor') {
-        navigation.navigate(Routes.TUTOR_DASHBOARD);
+        navigation.replace(Routes.TUTOR_DASHBOARD);
       } else {
-        navigation.navigate(Routes.STUDENT_DRAWER);
+        navigation.replace(Routes.STUDENT_DRAWER);
       }
     }
   };
