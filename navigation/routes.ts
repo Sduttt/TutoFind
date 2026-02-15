@@ -10,4 +10,6 @@ export const Routes = {
   STUDENT_DRAWER: 'StudentDrawer',
   TUTOR_PROFILE: 'TutorProfile',
   UPDATE_USER_DETAILS: 'UpdateUserDetails',
+  CHAT_SCREEN: 'ChatScreen',
+  CHAT_LIST_SCREEN: 'ChatListScreen',
 };

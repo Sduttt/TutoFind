@@ -8,6 +8,8 @@ import ViewPosts from './tutor/ViewPosts';
 import StudentHome from './student/StudentHome';
 import TutorProfile from './common/TutorProfile';
 import UpdateUserDetails from './common/UpdateUserDetails';
+import ChatScreen from './common/ChatScreen';
+import ChatListScreen from './common/ChatListScreen';
 
 const Screens = {
   SIGNUP_SCREEN: SignupStack,
@@ -20,6 +22,8 @@ const Screens = {
   STUDENT_HOME_SCREEN: StudentHome,
   TUTOR_PROFILE_SCREEN: TutorProfile,
   UPDATE_USER_DETAILS_SCREEN: UpdateUserDetails,
+  CHAT_SCREEN: ChatScreen,
+  CHAT_LIST_SCREEN: ChatListScreen,
 };
 
 export default Screens;

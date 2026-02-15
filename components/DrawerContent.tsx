@@ -4,16 +4,72 @@ import {
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+  faUser,
+  faSignOutAlt,
+  faComment,
+} from '@fortawesome/free-solid-svg-icons';
 import { UseAuthStore } from '../store/AuthStore';
 import { Routes } from '../navigation/routes';
 import { CommonActions } from '@react-navigation/native';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { supabase } from '../lib/supabase';
+import { useCallback, useEffect, useState } from 'react';
+import { getUnreadConversationsCount } from '../services/chatService';
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
   const { user } = useUserProfile();
   const signout = UseAuthStore(state => state.signout);
   const resetAuth = UseAuthStore(state => state.reset);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    if (user?.id) {
+      const { count } = await getUnreadConversationsCount(user.id);
+      setUnreadCount(count);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    fetchUnreadCount();
+
+    if (!user?.id) return;
+
+    // Listen for new messages or message updates (mark as read)
+    const channel = supabase
+      .channel(`unread-count-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        () => {
+          fetchUnreadCount();
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id}`,
+        },
+        payload => {
+          // If a message we sent was updated (likely marked as read by the other person),
+          // this doesn't affect OUR unread count (conversations with unread msgs for us),
+          // but we listen to updates where WE are the receiver above.
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, fetchUnreadCount]);
 
   const handleSignOut = async () => {
     await signout();
@@ -64,6 +120,19 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
           <FontAwesomeIcon icon={faUser} size={20} color="#374151" />
           <Text className="ml-4 text-gray-600 font-semibold w-full text-base">
             View Profile
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center p-3.5 rounded-xl mb-1"
+          onPress={() => props.navigation.navigate(Routes.CHAT_LIST_SCREEN)}
+        >
+          <FontAwesomeIcon icon={faComment} size={20} color="#374151" />
+          <Text className="ml-4 text-gray-600 font-semibold w-full text-base">
+            Chat{' '}
+            {unreadCount > 0 && (
+              <Text className="text-blue-500 font-bold">({unreadCount})</Text>
+            )}
           </Text>
         </TouchableOpacity>
 

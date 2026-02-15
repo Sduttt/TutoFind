@@ -30,9 +30,9 @@ const SignIn = ({ navigation }: any) => {
     if (success) {
       const userType = UseAuthStore.getState().data.user_type;
       if (userType === 'tutor') {
-        navigation.navigate(Routes.TUTOR_DASHBOARD);
+        navigation.replace(Routes.TUTOR_DASHBOARD);
       } else {
-        navigation.navigate(Routes.STUDENT_DRAWER);
+        navigation.replace(Routes.STUDENT_DRAWER);
       }
     } else {
       const storeError = UseAuthStore.getState().error;

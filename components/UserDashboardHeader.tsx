@@ -1,12 +1,66 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Routes } from '../navigation/routes';
+import { getUnreadConversationsCount } from '../services/chatService';
+import { supabase } from '../lib/supabase';
 
 const UserDashboardHeader = ({ user: passedUser }: { user?: any }) => {
   const { user: hookUser } = useUserProfile();
   const user = passedUser || hookUser;
+  const navigation = useNavigation<any>();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    if (user?.id) {
+      const { count } = await getUnreadConversationsCount(user.id);
+      setUnreadCount(count);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    fetchUnreadCount();
+
+    if (!user?.id) return;
+
+    // Listen for new messages or message updates (mark as read)
+    const channel = supabase
+      .channel(`unread-count-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        () => {
+          fetchUnreadCount();
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id}`,
+        },
+        payload => {
+          // If a message we sent was updated (likely marked as read by the other person),
+          // this doesn't affect OUR unread count (conversations with unread msgs for us),
+          // but we listen to updates where WE are the receiver above.
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, fetchUnreadCount]);
 
   return (
     <View className="flex-row justify-between items-start p-4">
@@ -40,13 +94,20 @@ const UserDashboardHeader = ({ user: passedUser }: { user?: any }) => {
         </View>
       </View>
       {/* Right */}
-      <TouchableOpacity className="mt-6 relative">
+      <TouchableOpacity
+        onPress={() => navigation.navigate(Routes.CHAT_LIST_SCREEN)}
+        className="mt-6 relative"
+      >
         <FontAwesomeIcon icon={faComment} size={24} />
-        <View className="absolute top-[-5px] right-[-5px]">
-          <View className="bg-red-500 rounded-full w-4 h-4 items-center justify-center">
-            <Text className="text-white text-xs">2</Text>
+        {unreadCount > 0 && (
+          <View className="absolute top-[-5px] right-[-5px]">
+            <View className="bg-red-500 rounded-full h-5 px-1.5 min-w-[20px] items-center justify-center">
+              <Text className="text-white text-[10px] font-bold">
+                {unreadCount}
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
       </TouchableOpacity>
     </View>
   );

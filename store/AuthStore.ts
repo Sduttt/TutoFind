@@ -57,6 +57,10 @@ interface AuthStore {
   reset: () => void;
   fetchProfile: () => Promise<boolean>;
   signout: () => Promise<void>;
+  initializeAuth: () => Promise<void>;
+  subscribeToAuthChanges: () => () => void;
+  isAuthResolved: boolean;
+  isLoggedIn: boolean;
 }
 
 export const UseAuthStore = create<AuthStore>((set, get) => ({
@@ -88,6 +92,8 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
   loading: false,
   error: null,
   userId: null,
+  isAuthResolved: false,
+  isLoggedIn: false,
 
   setData: (key, value) =>
     set(state => ({
@@ -615,5 +621,85 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       loading: false,
       error: null,
       userId: null,
+      isAuthResolved: true,
+      isLoggedIn: false,
     }),
+
+  initializeAuth: async () => {
+    console.log('initializeAuth: starting');
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('getSession timeout')), 10000),
+    );
+
+    try {
+      console.log('initializeAuth: about to getSession');
+      const {
+        data: { session },
+      } = (await Promise.race([
+        supabase.auth.getSession(),
+        timeoutPromise,
+      ])) as any;
+
+      const sessionUserId = session?.user?.id || null;
+      console.log('initializeAuth: session userId:', sessionUserId);
+
+      set({
+        userId: sessionUserId,
+        isLoggedIn: !!sessionUserId,
+      });
+
+      if (sessionUserId) {
+        console.log('initializeAuth: fetching profile');
+        await get().fetchProfile();
+      }
+    } catch (error: any) {
+      console.log('initializeAuth: error or timeout:', error.message);
+    } finally {
+      console.log('initializeAuth: setting isAuthResolved to true');
+      set({ isAuthResolved: true });
+    }
+  },
+
+  subscribeToAuthChanges: () => {
+    console.log('subscribeToAuthChanges: attaching listener');
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(
+        'onAuthStateChange: event:',
+        event,
+        'session user:',
+        session?.user?.id,
+      );
+      const nextUserId = session?.user?.id || null;
+
+      if (!nextUserId) {
+        set({
+          userId: null,
+          isLoggedIn: false,
+          isAuthResolved: true,
+        });
+        return;
+      }
+
+      const alreadyResolved = get().isAuthResolved;
+
+      set({
+        userId: nextUserId,
+        isLoggedIn: true,
+      });
+
+      if (event !== 'INITIAL_SESSION' || !alreadyResolved) {
+        await get().fetchProfile();
+      }
+
+      if (!alreadyResolved) {
+        set({ isAuthResolved: true });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  },
 }));
