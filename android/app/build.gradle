@@ -1,7 +1,15 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+import java.util.Properties
+def env = new Properties()
+def envFile = rootProject.file("../.env")
+if (envFile.exists()) {
+    envFile.withInputStream { env.load(it) }
+}
 
+project.ext.set("MYAPP_UPLOAD_STORE_PASSWORD", env.getProperty("MYAPP_UPLOAD_STORE_PASSWORD") ?: MYAPP_UPLOAD_STORE_PASSWORD)
+project.ext.set("MYAPP_UPLOAD_KEY_PASSWORD", env.getProperty("MYAPP_UPLOAD_KEY_PASSWORD") ?: MYAPP_UPLOAD_KEY_PASSWORD)
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -82,8 +90,8 @@ android {
         applicationId "com.tutofind"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode env.getProperty("VERSION_CODE")?.toInteger() ?: 1
+        versionName env.getProperty("VERSION_NAME") ?: "1.0"
     }
     signingConfigs {
         debug {
@@ -92,19 +100,23 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-    }
-    buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            storeFile file(MYAPP_UPLOAD_STORE_FILE)
+            storePassword MYAPP_UPLOAD_STORE_PASSWORD
+            keyAlias MYAPP_UPLOAD_KEY_ALIAS
+            keyPassword MYAPP_UPLOAD_KEY_PASSWORD
         }
     }
+        buildTypes {
+            debug {
+                signingConfig signingConfigs.debug
+            }
+            release {
+                signingConfig signingConfigs.release
+                minifyEnabled enableProguardInReleaseBuilds // Use the existing variable
+                proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            }
+        }
     packagingOptions {
        pickFirst 'lib/x86/libc++_shared.so'
        pickFirst 'lib/x86_64/libjsc.so'
@@ -113,6 +125,10 @@ android {
        pickFirst 'lib/x86_64/libc++_shared.so'
        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
      }
+
+
+
+
 }
 
 dependencies {

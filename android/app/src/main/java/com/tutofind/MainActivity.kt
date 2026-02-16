@@ -6,8 +6,15 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import android.os.Bundle
 import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
+import org.devio.rn.splashscreen.SplashScreen
 
 class MainActivity : ReactActivity() {
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    SplashScreen.show(this, R.style.SplashScreenTheme, true)
+    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+    super.onCreate(savedInstanceState)
+  }
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -21,9 +28,4 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
-    super.onCreate(savedInstanceState)
-  }
 }

@@ -6,6 +6,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 
 class MainApplication : Application(), ReactApplication {
 

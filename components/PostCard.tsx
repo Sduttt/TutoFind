@@ -218,14 +218,16 @@ const PostCard = ({
               </TouchableOpacity>
               <Text className="font-bold text-sm mt-2">{tutorName}</Text>
 
-              <TouchableOpacity
-                onPress={handleContact}
-                className="mt-2 bg-blue-600 rounded-xl px-2 py-1"
-              >
-                <Text className="text-white text-sm font-bold">
-                  Contact Tutor
-                </Text>
-              </TouchableOpacity>
+              {user?.user_type === 'student' && (
+                <TouchableOpacity
+                  onPress={handleContact}
+                  className="mt-2 bg-blue-600 rounded-xl px-2 py-1"
+                >
+                  <Text className="text-white text-sm font-bold">
+                    Contact Tutor
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
           <View>
