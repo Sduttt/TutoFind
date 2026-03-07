@@ -131,3 +131,28 @@ export const getUnreadConversationsCount = async (userId: string) => {
     return { count: 0, error: error.message };
   }
 };
+
+export const deleteConversation = async (conversationId: string) => {
+  try {
+    // First delete messages belonging to this conversation
+    const { error: msgError } = await supabase
+      .from('messages')
+      .delete()
+      .eq('conversation_id', conversationId);
+
+    if (msgError) throw msgError;
+
+    // Then delete the conversation row
+    const { error: convError } = await supabase
+      .from('conversations')
+      .delete()
+      .eq('id', conversationId);
+
+    if (convError) throw convError;
+
+    return { success: true, error: null };
+  } catch (error: any) {
+    console.error('Error deleting conversation:', error);
+    return { success: false, error: error.message };
+  }
+};

@@ -191,7 +191,7 @@ const StudentHome = () => {
             backgroundColor: !subject ? '#f3f4f6' : '#fff',
             maxHeight: 200,
           }}
-          listMode="FLATLIST"
+          listMode="MODAL"
           disabled={!subject}
         />
       </View>
@@ -222,7 +222,7 @@ const StudentHome = () => {
             backgroundColor: !subject ? '#f3f4f6' : '#fff',
             maxHeight: 200,
           }}
-          listMode="FLATLIST"
+          listMode="MODAL"
           disabled={!subject}
         />
 
@@ -251,7 +251,7 @@ const StudentHome = () => {
               backgroundColor: !subject ? '#f3f4f6' : '#fff',
               maxHeight: 200,
             }}
-            listMode="FLATLIST"
+            listMode="MODAL"
             disabled={!subject}
           />
         )}

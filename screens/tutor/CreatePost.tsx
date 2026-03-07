@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import subjects from '../../data/subjects.json';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { TextInput } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { useTutorPosts } from '../../hooks/useTutorPosts';
 import Components from '../../components/components';
 
@@ -188,259 +188,287 @@ const CreatePost = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-4">
-      {loading && <Components.LOADING_COMP />}
-      <Text className="text-2xl font-bold my-4">
-        {isEditMode ? 'Edit Post' : 'Create a New Post'}
-      </Text>
+      <ScrollView>
+        {loading && <Components.LOADING_COMP />}
+        <Text className="text-2xl font-bold my-4">
+          {isEditMode ? 'Edit Post' : 'Create a New Post'}
+        </Text>
 
-      <View className="mb-4 flex-row items-center justify-between">
-        {/* Choose subject */}
-        <DropDownPicker
-          open={openSubject}
-          value={subject}
-          items={subjectItems}
-          setOpen={setOpenSubject}
-          setValue={setSubject}
-          setItems={() => {}}
-          searchable={true}
-          searchPlaceholder="Search subjects..."
-          placeholder="Select a subject"
-          containerStyle={{
-            marginBottom: 20,
-            zIndex: 3000,
-            width: '48%',
-          }}
-          style={{ borderColor: '#d1d5db' }}
-          dropDownContainerStyle={{
-            backgroundColor: '#fff',
-            borderColor: '#E5E7EB',
-            maxHeight: 200,
-          }}
-          listMode="MODAL"
-          modalProps={{
-            animationType: 'slide',
-          }}
-          modalContentContainerStyle={{
-            backgroundColor: 'white',
-            width: '90%',
-            maxHeight: 300,
-            alignSelf: 'center',
-            borderRadius: 12,
-            padding: 10,
-          }}
-        />
+        <View className="mb-4 flex-row items-start justify-between">
+          <View className="w-[48%]">
+            <Text className="text-black font-bold mb-2">Subject</Text>
+            <DropDownPicker
+              open={openSubject}
+              value={subject}
+              items={subjectItems}
+              setOpen={setOpenSubject}
+              setValue={setSubject}
+              setItems={() => {}}
+              searchable={true}
+              searchPlaceholder="Search subjects..."
+              placeholder="Select a subject"
+              containerStyle={{
+                marginBottom: 20,
+                zIndex: 3000,
+                width: '100%',
+              }}
+              style={{ borderColor: '#d1d5db' }}
+              dropDownContainerStyle={{
+                backgroundColor: '#fff',
+                borderColor: '#E5E7EB',
+                maxHeight: 200,
+              }}
+              listMode="MODAL"
+              modalProps={{
+                animationType: 'slide',
+              }}
+              modalContentContainerStyle={{
+                backgroundColor: 'white',
+                width: '90%',
+                maxHeight: 300,
+                alignSelf: 'center',
+                borderRadius: 12,
+                padding: 10,
+              }}
+            />
+          </View>
 
-        <DropDownPicker
-          open={openSubjectline}
-          value={subjectline}
-          items={subjectlineItems}
-          setOpen={setOpenSubjectline}
-          setValue={setSubjectline}
-          setItems={() => {}} // Not needed unless you want to update items dynamically
-          searchable={false}
-          placeholder="Select a subject line"
-          containerStyle={{
-            marginBottom: 20,
-            zIndex: 3000,
-            width: '48%',
-            opacity: !subject ? 0.5 : 1, // visually indicate disabled
-          }}
-          style={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
-          }}
-          dropDownContainerStyle={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff',
-            maxHeight: 200,
-          }}
-          listMode="FLATLIST"
-          disabled={!subject}
-        />
-      </View>
+          <View className="w-[48%]">
+            <Text className="text-black font-bold mb-2">Subject Line</Text>
+            <DropDownPicker
+              open={openSubjectline}
+              value={subjectline}
+              items={subjectlineItems}
+              setOpen={setOpenSubjectline}
+              setValue={setSubjectline}
+              setItems={() => {}} // Not needed unless you want to update items dynamically
+              searchable={false}
+              placeholder="Select a subject line"
+              containerStyle={{
+                marginBottom: 20,
+                zIndex: 3000,
+                width: '100%',
+                opacity: !subject ? 0.5 : 1, // visually indicate disabled
+              }}
+              style={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
+              }}
+              dropDownContainerStyle={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff',
+                maxHeight: 200,
+              }}
+              listMode="MODAL"
+              disabled={!subject}
+            />
+          </View>
+        </View>
 
-      <View className="mb-4 flex-row items-center justify-between">
-        {/* Level */}
-        <DropDownPicker
-          open={openLevel}
-          value={level}
-          items={levelItems}
-          setOpen={setOpenLevel}
-          setValue={setLevel}
-          setItems={() => {}}
-          searchable={false}
-          placeholder="Select a level"
-          containerStyle={{
-            marginBottom: 20,
-            zIndex: 3000,
-            width: '48%',
-            opacity: !subject ? 0.5 : 1, // visually indicate disabled
-          }}
-          style={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
-          }}
-          dropDownContainerStyle={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff',
-            maxHeight: 200,
-          }}
-          listMode="FLATLIST"
-          disabled={!subject}
-        />
+        <View className="mb-4 flex-row items-start justify-between">
+          <View className="w-[48%]">
+            <Text className="text-black font-bold mb-2">Level</Text>
+            <DropDownPicker
+              open={openLevel}
+              value={level}
+              items={levelItems}
+              setOpen={setOpenLevel}
+              setValue={setLevel}
+              setItems={() => {}}
+              searchable={false}
+              placeholder="Select a level"
+              containerStyle={{
+                marginBottom: 20,
+                zIndex: 3000,
+                width: '100%',
+                opacity: !subject ? 0.5 : 1, // visually indicate disabled
+              }}
+              style={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
+              }}
+              dropDownContainerStyle={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff',
+                maxHeight: 200,
+              }}
+              listMode="MODAL"
+              disabled={!subject}
+            />
+          </View>
 
-        {boardItemsLength > 0 && (
-          <DropDownPicker
-            open={openBoard}
-            value={board}
-            items={boardItems}
-            setOpen={setOpenBoard}
-            setValue={setBoard}
-            setItems={() => {}} // Not needed unless you want to update items dynamically
-            searchable={false}
-            placeholder="Select a board"
-            containerStyle={{
-              marginBottom: 20,
-              zIndex: 2500,
-              width: '48%',
-              opacity: !subject ? 0.5 : 1, // visually indicate disabled
-            }}
-            style={{
-              borderColor: '#d1d5db',
-              backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
-            }}
-            dropDownContainerStyle={{
-              borderColor: '#d1d5db',
-              backgroundColor: !subject ? '#f3f4f6' : '#fff',
-              maxHeight: 200,
-            }}
-            listMode="FLATLIST"
-            disabled={!subject}
-          />
-        )}
-      </View>
+          {boardItemsLength > 0 && (
+            <View className="w-[48%]">
+              <Text className="text-black font-bold mb-2">Board</Text>
+              <DropDownPicker
+                open={openBoard}
+                value={board}
+                items={boardItems}
+                setOpen={setOpenBoard}
+                setValue={setBoard}
+                setItems={() => {}} // Not needed unless you want to update items dynamically
+                searchable={false}
+                placeholder="Select a board"
+                containerStyle={{
+                  marginBottom: 20,
+                  zIndex: 2500,
+                  width: '100%',
+                  opacity: !subject ? 0.5 : 1, // visually indicate disabled
+                }}
+                style={{
+                  borderColor: '#d1d5db',
+                  backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
+                }}
+                dropDownContainerStyle={{
+                  borderColor: '#d1d5db',
+                  backgroundColor: !subject ? '#f3f4f6' : '#fff',
+                  maxHeight: 200,
+                }}
+                listMode="MODAL"
+                disabled={!subject}
+              />
+            </View>
+          )}
+        </View>
 
-      <View className="mb-4 flex-row items-center justify-between">
-        {/* Level */}
-        <DropDownPicker
-          open={openMode}
-          value={mode}
-          items={modeItems}
-          setOpen={setOpenMode}
-          setValue={setMode}
-          setItems={() => {}}
-          searchable={false}
-          placeholder="Select teaching mode"
-          containerStyle={{
-            marginBottom: 20,
-            zIndex: 1000,
-            width: '48%',
-            opacity: !subject ? 0.5 : 1, // visually indicate disabled
-          }}
-          style={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
-          }}
-          dropDownContainerStyle={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff',
-            maxHeight: 200,
-          }}
-          listMode="FLATLIST"
-          disabled={!subject}
-        />
+        <View className="mb-4 flex-row items-start justify-between">
+          <View className="w-[48%]">
+            <Text className="text-black font-bold mb-2">Teaching Mode</Text>
+            <DropDownPicker
+              open={openMode}
+              value={mode}
+              items={modeItems}
+              setOpen={setOpenMode}
+              setValue={setMode}
+              setItems={() => {}}
+              searchable={false}
+              placeholder="Select teaching mode"
+              containerStyle={{
+                marginBottom: 20,
+                zIndex: 1000,
+                width: '100%',
+                opacity: !subject ? 0.5 : 1, // visually indicate disabled
+              }}
+              style={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
+              }}
+              dropDownContainerStyle={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff',
+                maxHeight: 200,
+              }}
+              listMode="MODAL"
+              disabled={!subject}
+            />
+          </View>
 
-        <DropDownPicker
-          open={openFreeDemoAvailability}
-          value={freeDemoAvailability}
-          items={freeDemoAvailabilityItems}
-          setOpen={setOpenFreeDemoAvailability}
-          setValue={setFreeDemoAvailability}
-          setItems={() => {}} // Not needed unless you want to update items dynamically
-          searchable={false}
-          placeholder="Free demo availability"
-          containerStyle={{
-            marginBottom: 20,
-            zIndex: 500,
-            width: '48%',
-            opacity: !subject ? 0.5 : 1, // visually indicate disabled
-          }}
-          style={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
-          }}
-          dropDownContainerStyle={{
-            borderColor: '#d1d5db',
-            backgroundColor: !subject ? '#f3f4f6' : '#fff',
-            maxHeight: 200,
-          }}
-          listMode="FLATLIST"
-          disabled={!subject}
-        />
-      </View>
+          <View className="w-[48%]">
+            <Text className="text-black font-bold mb-2">Free Demo</Text>
+            <DropDownPicker
+              open={openFreeDemoAvailability}
+              value={freeDemoAvailability}
+              items={freeDemoAvailabilityItems}
+              setOpen={setOpenFreeDemoAvailability}
+              setValue={setFreeDemoAvailability}
+              setItems={() => {}} // Not needed unless you want to update items dynamically
+              searchable={false}
+              placeholder="Free demo availability"
+              containerStyle={{
+                marginBottom: 20,
+                zIndex: 500,
+                width: '100%',
+                opacity: !subject ? 0.5 : 1, // visually indicate disabled
+              }}
+              style={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff', // lighter bg when disabled
+              }}
+              dropDownContainerStyle={{
+                borderColor: '#d1d5db',
+                backgroundColor: !subject ? '#f3f4f6' : '#fff',
+                maxHeight: 200,
+              }}
+              listMode="MODAL"
+              disabled={!subject}
+            />
+          </View>
+        </View>
 
-      <View className="">
-        <View className="mb-4 flex-row items-center justify-between">
+        <View className="">
+          <View className="mb-4 flex-row items-start justify-between">
+            <View className="w-[48%]">
+              <Text className="text-black font-bold mb-2">
+                Minimum fee per hour
+              </Text>
+              <TextInput
+                placeholder="Minimum fee per hour"
+                value={minsalary}
+                onChangeText={setMinsalary}
+                keyboardType="numeric"
+                className="border border-gray-300 rounded-lg px-4 py-3 w-full"
+              />
+            </View>
+
+            <View className="w-[48%]">
+              <Text className="text-black font-bold mb-2">
+                Maximum fee per hour
+              </Text>
+              <TextInput
+                placeholder="Maximum fee per hour"
+                value={maxsalary}
+                onChangeText={setMaxsalary}
+                keyboardType="numeric"
+                className="border border-gray-300 rounded-lg px-4 py-3 w-full"
+              />
+            </View>
+          </View>
+          {maxsalary && minsalary && Number(maxsalary) < Number(minsalary) ? (
+            <Text className="text-red-500">
+              * Maximum fee must be greater than minimum fee
+            </Text>
+          ) : (
+            ''
+          )}
+        </View>
+        <View className="mb-6">
+          <Text className="text-black font-bold mb-2">Description</Text>
           <TextInput
-            placeholder="Minimum fee per hour"
-            value={minsalary}
-            onChangeText={setMinsalary}
-            keyboardType="numeric"
-            className="border border-gray-300 rounded-lg px-4 py-3 w-[48%]"
-          />
-          <TextInput
-            placeholder="Maximum fee per hour"
-            value={maxsalary}
-            onChangeText={setMaxsalary}
-            keyboardType="numeric"
-            className="border border-gray-300 rounded-lg px-4 py-3 w-[48%]"
+            placeholder="Description"
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            value={description}
+            onChangeText={setDescription}
+            className="border border-gray-300 rounded-lg px-4 py-3 w-full h-24"
           />
         </View>
-        {maxsalary && minsalary && Number(maxsalary) < Number(minsalary) ? (
-          <Text className="text-red-500">
-            * Maximum fee must be greater than minimum fee
+
+        <TouchableOpacity
+          onPress={handleSubmit}
+          disabled={!isFormValid() || loading}
+          className={`rounded-lg px-4 py-3 w-full mb-4 ${
+            !isFormValid() || loading ? 'bg-gray-400' : 'bg-blue-500'
+          }`}
+        >
+          <Text className="text-white text-center font-bold">
+            {loading
+              ? isEditMode
+                ? 'Updating...'
+                : 'Creating...'
+              : isEditMode
+                ? 'Update Post'
+                : 'Create Post'}
           </Text>
-        ) : (
-          ''
-        )}
-      </View>
-      <View className="mb-6">
-        <Text className="text-black font-bold mb-2">Description</Text>
-        <TextInput
-          placeholder="Description"
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-          value={description}
-          onChangeText={setDescription}
-          className="border border-gray-300 rounded-lg px-4 py-3 w-full h-24"
-        />
-      </View>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={handleSubmit}
-        disabled={!isFormValid() || loading}
-        className={`rounded-lg px-4 py-3 w-full mb-4 ${
-          !isFormValid() || loading ? 'bg-gray-400' : 'bg-blue-500'
-        }`}
-      >
-        <Text className="text-white text-center font-bold">
-          {loading
-            ? isEditMode
-              ? 'Updating...'
-              : 'Creating...'
-            : isEditMode
-            ? 'Update Post'
-            : 'Create Post'}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={handleReset}
-        className="bg-gray-500 rounded-lg px-4 py-3 w-full"
-      >
-        <Text className="text-white text-center font-bold">Reset</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleReset}
+          className="bg-gray-500 rounded-lg px-4 py-3 w-full"
+        >
+          <Text className="text-white text-center font-bold">Reset</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };

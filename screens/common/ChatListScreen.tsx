@@ -5,10 +5,14 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Alert,
+  ToastAndroid,
+  Platform,
+  Pressable,
 } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getConversations } from '../../services/chatService';
+import { getConversations, deleteConversation } from '../../services/chatService';
 import { UseAuthStore } from '../../store/AuthStore';
 import { Routes } from '../../navigation/routes';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -81,14 +85,47 @@ const ChatListScreen = () => {
 
     if (!otherUser) return null;
 
+    const handleLongPress = () => {
+      Alert.alert(
+        'Delete Conversation',
+        'Are you sure you want to delete this conversation and all its messages?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                const { success, error } = await deleteConversation(item.id);
+                if (success) {
+                  if (Platform.OS === 'android') {
+                    ToastAndroid.show('Conversation deleted', ToastAndroid.SHORT);
+                  } else {
+                    Alert.alert('Deleted', 'Conversation deleted');
+                  }
+                  fetchConversationsData();
+                } else {
+                  Alert.alert('Error', error || 'Unable to delete conversation');
+                }
+              } catch (err) {
+                console.error('Delete conversation error:', err);
+                Alert.alert('Error', 'Unable to delete conversation');
+              }
+            },
+          },
+        ],
+      );
+    };
+
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={() =>
           navigation.navigate(Routes.CHAT_SCREEN, {
             conversationId: item.id,
             tutorId: isStudent ? item.tutor_id : item.student_id,
           })
         }
+        onLongPress={handleLongPress}
         className={`flex-row items-center p-4 border-b border-gray-100 ${
           isUnread ? 'bg-blue-50/50' : 'bg-white'
         }`}
@@ -142,7 +179,7 @@ const ChatListScreen = () => {
             )}
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
