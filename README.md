@@ -1,97 +1,86 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Tutofind
 
-# Getting Started
+**A simple platform concept for connecting learners with tutors and educational resources — created purely as a learning & practice project.**
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+This is **not** a production-ready application or commercial service. 
 
-## Step 1: Start Metro
+The main purpose of open-sourcing this code is to serve as a reference for personal learning and academic projects  
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+**Please read the license section carefully before using any part of this code.**
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## ✨ Features Implemented (so far)
 
-```sh
-# Using npm
-npm start
+- User registration & login (student / tutor roles)
+- Basic profile creation (tutor: subjects, location, hourly rate, bio)
+- Simple search/filter tutors by subject, topic etc
+- View tutor profile with listed subjects and contact button
+- Create post for tutors based on what they want to teach
+- Connect and chat with tutor/student
 
-# OR using Yarn
-yarn start
+## 🖥️ Tech Stack
+
+- React Native 
+- React Navigation
+- Tailwind CSS  
+- Zustand
+- Supabase for backend
+
+
+## 🚀 How to Run Locally (for study & learning only)
+
+### Prerequisites
+
+- Node.js 22+
+- npm or yarn
+- Supabase account
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/sduttt/tutofind.git
+cd tutofind
 ```
 
-## Step 2: Build and run your app
+### 2. Install Dependencies
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm install
+# or
+yarn install
 ```
 
-### iOS
+### 3. Create Supabase Project
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+Create the project in your supabase account and create the necessery tables and buckets. For more informations about it, connect me directly.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### 4. Env variables 
 
-```sh
-bundle install
+Create .env file and provide values for these:
+```bash
+SUPABASE_URL="your value"
+SUPABASE_API_KEY="your value"
 ```
 
-Then, and every time you update your native dependencies, run:
+### 5. Environment setup
 
-```sh
-bundle exec pod install
+Set up the proper enviorenment to run a React Native application in your local computer including installing required softwares like Android studio, Xcode.
+
+### 6. Run the applicatiion
+
+Run the following command in 2 different terminal window:
+```bash
+npm start  ###and
+npm run android ###for android
+npm run ios ###for ios
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## License
 
-```sh
-# Using npm
-npm run ios
+This project (tutofind) is licensed under **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)**.
 
-# OR using Yarn
-yarn ios
-```
+- You can view, copy, and share the code for **personal, educational, or non-commercial learning purposes**.
+- You **must** give credit to the original author (Subham Dutta / @sdutttttt).
+- You **cannot** modify the code and distribute the changes.
+- You **cannot** use it for any commercial purpose, monetization, paid products, services, or courses.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Full license → https://creativecommons.org/licenses/by-nc-nd/4.0/

@@ -5,9 +5,9 @@ import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import { Alert } from 'react-native';
 
-declare global {
-  const atob: (input: string) => string;
-}
+// declare global {
+//   const atob: (input: string) => string;
+// }
 
 interface SignupData {
   full_name: string;
