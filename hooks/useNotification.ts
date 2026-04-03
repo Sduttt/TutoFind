@@ -1,5 +1,6 @@
 import {PermissionsAndroid} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import { useEffect } from 'react';
 import { UseAuthStore } from '../store/AuthStore';
 import { supabase } from '../lib/supabase';
@@ -28,7 +29,7 @@ const getToken = async (userId: string) => {
             if (error) {
                 console.log("Error saving FCM token to Supabase:", error.message);
             } else {
-                console.log("FCM token successfully saved to profile.");
+                // console.log("FCM token successfully saved to profile.");
             }
         }
     } catch (error) {
@@ -60,4 +61,37 @@ export const useNotification = () => {
         
         return unsubscribe;
     }, [userId]);
+
+    // Listen for foreground messages
+    
+    useEffect(() => {
+        const unsubscribe = messaging().onMessage(async remoteMessage => {
+            // console.log('A new FCM message arrived in the foreground!', remoteMessage);
+            // 1. Request permissions (required for iOS)
+            await notifee.requestPermission();
+            // 2. Create a channel (required for Android)
+            const channelId = await notifee.createChannel({
+                id: 'default',
+                name: 'Default Channel',
+                importance: AndroidImportance.HIGH, 
+            });
+            // 3. Display the notification locally
+            if (remoteMessage.notification) {
+                await notifee.displayNotification({
+                    title: remoteMessage.notification.title,
+                    body: remoteMessage.notification.body,
+                    android: {
+                        channelId,
+                        importance: AndroidImportance.HIGH,
+                        // Add a small icon here if you have one configured in Android res/drawable
+                        // smallIcon: 'ic_launcher', 
+                        pressAction: {
+                            id: 'default',
+                        },
+                    },
+                });
+            }
+        });
+        return unsubscribe;
+    }, []);
 }
