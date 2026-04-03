@@ -1,6 +1,8 @@
 import {PermissionsAndroid} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { useEffect } from 'react';
+import { UseAuthStore } from '../store/AuthStore';
+import { supabase } from '../lib/supabase';
 
 const reqUserPermission = async () => {
     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -12,18 +14,50 @@ const reqUserPermission = async () => {
     }
 }
 
-const getToken = async () => {
+const getToken = async (userId: string) => {
     try {
-        const  token = await messaging().getToken();
+        const token = await messaging().getToken();
         console.log("FCM Token: ", token)
+        
+        if (userId && token) {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ fcm_token: token })
+                .eq('id', userId);
+                
+            if (error) {
+                console.log("Error saving FCM token to Supabase:", error.message);
+            } else {
+                console.log("FCM token successfully saved to profile.");
+            }
+        }
     } catch (error) {
         console.log("Failed to get FCM token", error)
     }
 }
 
 export const useNotification = () => {
+    const userId = UseAuthStore(state => state.userId);
+
     useEffect(() => {
         reqUserPermission();
-        getToken();
-    }, [])
+        if (userId) {
+            getToken(userId);
+        }
+    }, [userId])
+
+    // Listen for FCM token refresh
+    useEffect(() => {
+        if (!userId) return;
+        
+        const unsubscribe = messaging().onTokenRefresh(async (newToken) => {
+            console.log("FCM Token refreshed: ", newToken);
+            await supabase
+                .from('profiles')
+                .update({ fcm_token: newToken })
+                .eq('id', userId);
+        });
+        
+        return unsubscribe;
+    }, [userId]);
 }
