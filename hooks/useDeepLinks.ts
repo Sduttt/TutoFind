@@ -61,7 +61,7 @@ export const useDeepLinks = () => {
     const {
       data: { subscription: authSubscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event:', event, session?.user?.id);
+      // console.log('Auth event:', event, session?.user?.id);
 
       if (event === 'PASSWORD_RECOVERY') {
         const waitForNavigationReady = () => {

@@ -12,10 +12,12 @@ import { navigationRef } from './navigation/navigationRef';
 import { useEffect, useState } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import VideoSplashScreen from './screens/common/VideoSplashScreen';
+import { useNotification } from './hooks/useNotification';
 
 export default function App() {
   const [showVideoSplash, setShowVideoSplash] = useState(true);
   useDeepLinks();
+  useNotification();
 
   useEffect(() => {
     // Hide native static splash immediately so video splash can take over

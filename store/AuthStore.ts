@@ -204,7 +204,7 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
         set({ loading: false, error: `Signin Error: ${authError.message}` });
         throw authError;
       } else {
-        console.log('Signin successful:', authData);
+        // console.log('Signin successful:', authData);
       }
 
       set({ loading: false, userId: authData.user?.id || null });
@@ -626,13 +626,13 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
     }),
 
   initializeAuth: async () => {
-    console.log('initializeAuth: starting');
+    // console.log('initializeAuth: starting');
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('getSession timeout')), 10000),
     );
 
     try {
-      console.log('initializeAuth: about to getSession');
+      // console.log('initializeAuth: about to getSession');
       const {
         data: { session },
       } = (await Promise.race([
@@ -641,7 +641,7 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       ])) as any;
 
       const sessionUserId = session?.user?.id || null;
-      console.log('initializeAuth: session userId:', sessionUserId);
+      // console.log('initializeAuth: session userId:', sessionUserId);
 
       set({
         userId: sessionUserId,
@@ -649,28 +649,28 @@ export const UseAuthStore = create<AuthStore>((set, get) => ({
       });
 
       if (sessionUserId) {
-        console.log('initializeAuth: fetching profile');
+        // console.log('initializeAuth: fetching profile');
         await get().fetchProfile();
       }
     } catch (error: any) {
       console.log('initializeAuth: error or timeout:', error.message);
     } finally {
-      console.log('initializeAuth: setting isAuthResolved to true');
+      // console.log('initializeAuth: setting isAuthResolved to true');
       set({ isAuthResolved: true });
     }
   },
 
   subscribeToAuthChanges: () => {
-    console.log('subscribeToAuthChanges: attaching listener');
+    // console.log('subscribeToAuthChanges: attaching listener');
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(
-        'onAuthStateChange: event:',
-        event,
-        'session user:',
-        session?.user?.id,
-      );
+      // console.log(
+      //   'onAuthStateChange: event:',
+      //   event,
+      //   'session user:',
+      //   session?.user?.id,
+      // );
       const nextUserId = session?.user?.id || null;
 
       if (!nextUserId) {
