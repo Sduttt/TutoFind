@@ -67,15 +67,14 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`, // Secure Token!
       },
+      // Send as data-only payload so client controls notification rendering
       body: JSON.stringify({
         message: {
           token: receiverProfile.fcm_token,
-          notification: {
+          data: {
             title: senderName,
             body: record.content,
-          },
-          data: {
-            conversationId: record.conversation_id, // Sent silently for RN routing
+            conversationId: String(record.conversation_id ?? ''),
           },
         },
       }),
