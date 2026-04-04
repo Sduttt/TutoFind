@@ -224,7 +224,7 @@ export const useTutorPosts = () => {
         setLoading(false);
         return [];
       }
-      console.log('Posts fetched successfully:', data);
+      // console.log('Posts fetched successfully:', data);
       setLoading(false);
       return data;
     } catch (err) {

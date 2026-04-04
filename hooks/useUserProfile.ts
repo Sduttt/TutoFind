@@ -20,7 +20,7 @@ export const useUserProfile = () => {
       setError(apiError);
     } else {
       setUserProfile(data);
-      console.log(data)
+      // console.log(data)
     }
 
     setLoading(false);

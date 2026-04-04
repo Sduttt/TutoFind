@@ -30,13 +30,12 @@ export const DrawerNavigation = () => {
 };
 
 const MainNavigation = () => {
-  const {
-    userId,
-    isAuthResolved,
-    data,
-    initializeAuth,
-    subscribeToAuthChanges,
-  } = UseAuthStore();
+  const userId = UseAuthStore(state => state.userId);
+  const isAuthResolved = UseAuthStore(state => state.isAuthResolved);
+  const gender = UseAuthStore(state => state.data.gender);
+  const user_type = UseAuthStore(state => state.data.user_type);
+  const initializeAuth = UseAuthStore(state => state.initializeAuth);
+  const subscribeToAuthChanges = UseAuthStore(state => state.subscribeToAuthChanges);
 
   useEffect(() => {
     initializeAuth();
@@ -48,12 +47,12 @@ const MainNavigation = () => {
     };
   }, [initializeAuth, subscribeToAuthChanges]);
 
-  console.log(
-    'MainNavigation: userId:',
-    userId,
-    'isAuthResolved:',
-    isAuthResolved,
-  );
+  // console.log(
+  //   'MainNavigation: userId:',
+  //   userId,
+  //   'isAuthResolved:',
+  //   isAuthResolved,
+  // );
 
   if (!isAuthResolved) {
     return (
@@ -75,12 +74,12 @@ const MainNavigation = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName={
         userId === null
-          ? Routes.SIGNIN
-          : !data.gender
-            ? Routes.ADD_USER_DETAILS
-            : data.user_type === 'tutor'
-              ? Routes.TUTOR_DASHBOARD
-              : Routes.STUDENT_DRAWER
+            ? Routes.SIGNIN
+            : !gender
+              ? Routes.ADD_USER_DETAILS
+              : user_type === 'tutor'
+                ? Routes.TUTOR_DASHBOARD
+                : Routes.STUDENT_DRAWER
       }
     >
       {userId === null ? (

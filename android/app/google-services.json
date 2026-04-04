@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083315220438",
+    "project_id": "tutofind-763c2",
+    "storage_bucket": "tutofind-763c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083315220438:android:a9d51c155d72709ab5be77",
+        "android_client_info": {
+          "package_name": "com.tutofind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbnt9cFNYrTQx-5LSEB01STUgXlQtqIFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import subjects from '../../data/subjects.json';
@@ -257,7 +257,7 @@ const StudentHome = () => {
         )}
       </View>
 
-      <View className="">
+      <ScrollView className="">
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : error ? (
@@ -313,7 +313,7 @@ const StudentHome = () => {
             );
           })
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

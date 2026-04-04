@@ -99,7 +99,7 @@ const PostCard = ({
           chatData.id,
           user.id,
           tutorId,
-          `I am interested in this class: **${subject}**, **${subjectLine}**.`,
+          `I am interested in this class: ${subject}, ${subjectLine}.`,
         );
         if (msgError) {
           console.error('Error sending first message:', msgError);
