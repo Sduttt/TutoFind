@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import subjects from '../../data/subjects.json';
@@ -58,15 +58,53 @@ const StudentHome = () => {
   const fetchposts = async () => {
     try {
       const result = await studentGetPosts(subject, subjectline, level, board);
-      setPosts(result || []);
+      setPosts(postsWithAds(result || []));
     } catch (err) {
       console.error('Error fetching posts:', err);
     }
   };
 
+  const postsWithAds = (posts: any[]) => {
+    let postSinceLastAd = 0;
+    let nextAdIndex = 1;
+    
+    for(let i = 0; i < posts.length; i++) {
+      if (postSinceLastAd >= nextAdIndex) {
+        posts.splice(i+1, 0, { isAd: true, id: `ad-${i}` });
+        postSinceLastAd = 0;
+        nextAdIndex++;
+        i++; // Skip the ad we just inserted
+      } else {
+        postSinceLastAd++;
+      }
+    }
+
+    return posts;
+  }
+
   useEffect(() => {
     fetchposts();
   }, [subject, subjectline, level, board]);
+
+  const postDateDuration = (created_at: string) => {
+    const now = new Date();
+    const created = new Date(created_at);
+    const diffMs = now.getTime() - created.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHr = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+
+    if (diffDay > 0) {
+      return `${diffDay}d ago`;
+    } else if (diffHr > 0) {
+      return `${diffHr}h ago`;
+    } else if (diffMin > 0) {
+      return `${diffMin}m ago`;
+    } else {
+      return 'Just now';
+    }
+  };
 
   useEffect(() => {
     if (!posts.length) {
@@ -257,63 +295,55 @@ const StudentHome = () => {
         )}
       </View>
 
-      <ScrollView className="">
-        {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : error ? (
-          <Text className="text-red-500">{error}</Text>
-        ) : posts.length === 0 ? (
-          <Text className="text-gray-500 font-bold text-3xl text-center">
-            No Posts Available
-          </Text>
-        ) : (
-          posts.map((post, index) => {
-            let formattedDate = '';
-            const tutorProfile = tutorProfiles[post.tutor_id];
 
-            if (post.created_at) {
-              const now = new Date();
-              const created = new Date(post.created_at);
-              const diffMs = now.getTime() - created.getTime();
-              const diffSec = Math.floor(diffMs / 1000);
-              const diffMin = Math.floor(diffSec / 60);
-              const diffHr = Math.floor(diffMin / 60);
-              const diffDay = Math.floor(diffHr / 24);
-
-              if (diffDay > 0) {
-                formattedDate = `${diffDay}d ago`;
-              } else if (diffHr > 0) {
-                formattedDate = `${diffHr}h ago`;
-              } else if (diffMin > 0) {
-                formattedDate = `${diffMin}m ago`;
-              } else {
-                formattedDate = 'Just now';
-              }
-            }
+      <FlatList
+        data={posts}
+        keyExtractor={(item, index) => item.id ? String(item.id) : `post-${index}`}
+        renderItem={({ item, index }) => {
+          if (item.isAd) {
+            return (
+              <Components.AD_BANNER />
+            );
+          }
+          else {
+            const tutorProfile = tutorProfiles[item.tutor_id];
             return (
               <Components.POST_CARD
-                key={post.id ? String(post.id) : `post-${index}`}
-                subject={post.subject}
-                subjectLine={post.subject_line_2}
-                level={post.level}
-                board={post.board}
-                desc={post.description}
-                minFees={post.min_salary}
-                maxFees={post.max_salary}
-                mode={post.mode_of_teaching}
-                freeDemo={post.isFreeDemoAvailable}
+                key={item.id ? String(item.id) : `post-${index}`}
+                subject={item.subject}
+                subjectLine={item.subject_line_2}
+                level={item.level}
+                board={item.board}
+                desc={item.description}
+                minFees={item.min_salary}
+                maxFees={item.max_salary}
+                mode={item.mode_of_teaching}
+                freeDemo={item.isFreeDemoAvailable}
                 tutorName={tutorProfile?.full_name}
                 tutorImg={tutorProfile?.avatar_url}
-                postDate={formattedDate}
-                totalViews={post.total_views}
-                tutorId={post.tutor_id}
-                postId={post.id}
-                isLive={post.isLive}
+                postDate={postDateDuration(item.created_at)}
+                totalViews={item.total_views}
+                tutorId={item.tutor_id}
+                postId={item.id}
+                isLive={item.isLive}
               />
             );
-          })
-        )}
-      </ScrollView>
+          }
+
+        }}
+        ListEmptyComponent={
+          loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : error ? (
+            <Text className="text-red-500">{error}</Text>
+          ) : (
+            <Text className="text-gray-500 font-bold text-3xl text-center">
+              No Posts Available
+            </Text>
+          )
+        }
+        contentContainerStyle={{ paddingBottom: 100 }}
+      />  
     </SafeAreaView>
   );
 };
