@@ -17,6 +17,7 @@ The main purpose of open-sourcing this code is to serve as a reference for perso
 - Create post for tutors based on what they want to teach
 - Connect and chat with tutor/student
 - Receive Push Notifications when a new message received
+- Show ad  banner in the list of posts in students account
 
 ## 🖥️ Tech Stack
 

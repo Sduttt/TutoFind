@@ -1,4 +1,7 @@
 {
   "name": "TutoFind",
-  "displayName": "TutoFind"
+  "displayName": "TutoFind",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4520226057145729~6633134838"
+  }
 }
