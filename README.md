@@ -61,6 +61,8 @@ Create .env file and provide values for these:
 ```bash
 SUPABASE_URL="your value"
 SUPABASE_API_KEY="your value"
+ADMOB_APP_ID=ca-app-pub-xxxxxxxxx-yyyyyyyy
+ADMOB_BANNER_UNIT_ID=ca-app-pub-xxxxxxxxx/yyyyyyyy
 ```
 
 ### 5. Environment setup

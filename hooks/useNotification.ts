@@ -10,17 +10,12 @@ import { Routes } from '../navigation/routes';
 const reqUserPermission = async () => {
     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
-    if(granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("Noti permission granted")
-    } else {
-        console.log("Noti permission denied")
-    }
 }
 
 const getToken = async (userId: string) => {
     try {
         const token = await messaging().getToken();
-        console.log("FCM Token: ", token)
+        // console.log("FCM Token: ", token)
         
         if (userId && token) {
             const { error } = await supabase
